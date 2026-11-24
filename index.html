@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>مترجم الملازم الجامعية PDF — إعداد أيمن رعد</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +25,7 @@
       --en-size: 16px;
       --ar-size: 16px;
       --ar-color: #1d4ed8;
-      --line-gap: 1.75;
+      --line-gap: 1.72;
     }
 
     html[data-theme="dark"] {
@@ -52,6 +52,11 @@
 
     * { box-sizing: border-box; }
 
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       font-family: 'Cairo', sans-serif;
       background-color: var(--bg-app);
@@ -73,11 +78,13 @@
     .en-line {
       font-family: var(--en-font);
       font-size: var(--en-size);
-      line-height: var(--line-gap);
+      line-height: 1.6;
       direction: ltr;
       text-align: left;
       unicode-bidi: isolate;
       color: var(--text-main);
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .ar-line {
@@ -87,6 +94,8 @@
       direction: rtl;
       text-align: right;
       color: var(--ar-color);
+      overflow-wrap: anywhere;
+      word-break: break-word;
       transition: filter 0.2s ease, opacity 0.2s ease;
     }
 
@@ -96,7 +105,7 @@
 
     .study-hidden .ar-line:not(.revealed) {
       filter: blur(7px);
-      opacity: 0.28;
+      opacity: 0.26;
       user-select: none;
       cursor: pointer;
     }
@@ -124,11 +133,11 @@
       overflow: hidden;
       opacity: 0.085;
       background-repeat: repeat;
-      background-size: 270px 190px;
+      background-size: 240px 175px;
     }
 
     html[data-theme="dark"] .watermark-layer {
-      opacity: 0.07;
+      opacity: 0.065;
     }
 
     .page-content-layer {
@@ -149,26 +158,34 @@
       padding: 4px 8px;
     }
 
-    /* Print / Save as PDF styles with tiled diagonal watermark on every page */
+    /* Print / Save as PDF styles: natural multi-page flow + fixed diagonal watermark on EVERY page */
     .print-watermark-fixed {
       display: none;
     }
 
     @media print {
       @page {
-        size: A4;
+        size: A4 portrait;
         margin: 14mm 12mm;
       }
 
-      body {
+      html, body {
         background: #ffffff !important;
         color: #0f172a !important;
+        overflow: visible !important;
+        height: auto !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
       .no-print {
         display: none !important;
+      }
+
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
       }
 
       .print-watermark-fixed {
@@ -181,34 +198,39 @@
         pointer-events: none !important;
         opacity: 0.095 !important;
         background-repeat: repeat !important;
-        background-size: 250px 175px !important;
+        background-size: 240px 170px !important;
       }
 
       .bilingual-page {
         border: none !important;
         box-shadow: none !important;
         background: transparent !important;
-        margin: 0 0 12mm 0 !important;
+        margin: 0 0 8mm 0 !important;
         padding: 0 !important;
-        page-break-after: always;
-        break-after: page;
         overflow: visible !important;
-      }
-
-      .bilingual-page:last-child {
-        page-break-after: auto;
-        break-after: auto;
+        break-inside: auto !important;
       }
 
       .bilingual-page .watermark-layer {
         display: none !important;
       }
 
+      .page-header-bar {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+        border-bottom: 1.5px solid #cbd5e1 !important;
+        margin-bottom: 8px !important;
+        padding-bottom: 5px !important;
+      }
+
       .bilingual-block {
-        break-inside: avoid;
-        page-break-inside: avoid;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
         background: transparent !important;
-        border-color: #e2e8f0 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 8px 10px !important;
+        margin-bottom: 8px !important;
       }
 
       .study-hidden .ar-line {
@@ -219,6 +241,14 @@
       .en-line {
         color: #0f172a !important;
       }
+
+      .ar-line {
+        color: var(--ar-color) !important;
+      }
+
+      .retry-line-btn {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -227,36 +257,36 @@
   <!-- Fixed Print Watermark Layer (appears on every exported PDF page) -->
   <div id="printWatermarkFixed" class="print-watermark-fixed" aria-hidden="true"></div>
 
-  <!-- Fixed Top Header -->
+  <!-- Fixed Responsive Top Header -->
   <header class="no-print sticky top-0 z-30 surface-card border-x-0 border-t-0 backdrop-blur-md bg-opacity-95">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
           <i data-lucide="book-open-text" class="w-5 h-5"></i>
         </div>
         <div class="min-w-0">
-          <h1 class="text-base sm:text-lg font-extrabold truncate leading-tight">مترجم الملازم الجامعية</h1>
-          <p class="text-xs opacity-75 truncate">ترجمة PDF سطر بسطر مع حفظ التنسيق والصور</p>
+          <h1 class="text-sm sm:text-lg font-extrabold truncate leading-tight">مترجم الملازم الجامعية</h1>
+          <p class="text-[11px] sm:text-xs opacity-75 truncate">ترجمة PDF سطر بسطر بدقة عالية</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <!-- Fixed Credit Badge -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-blue-600/10 text-blue-700 dark:text-blue-300 border border-blue-600/20 select-none" title="حقوق الإعداد">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i>
+        <div class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold bg-blue-600/10 text-blue-700 dark:text-blue-300 border border-blue-600/20 select-none" title="حقوق الإعداد">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
           <span>إعداد أيمن رعد</span>
         </div>
 
         <!-- Theme Switcher -->
-        <div class="flex items-center subtle-box rounded-xl p-1 gap-0.5" role="group" aria-label="تغيير المظهر">
+        <div class="flex items-center subtle-box rounded-xl p-0.5 sm:p-1 gap-0.5" role="group" aria-label="تغيير المظهر">
           <button type="button" data-theme-btn="light" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع النهاري">
-            <i data-lucide="sun" class="w-4 h-4"></i>
+            <i data-lucide="sun" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           </button>
-          <button type="button" data-theme-btn="sepia" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع الورقي المريح للعين">
-            <i data-lucide="book-open" class="w-4 h-4"></i>
+          <button type="button" data-theme-btn="sepia" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع الورقي">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           </button>
           <button type="button" data-theme-btn="dark" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع الليلي">
-            <i data-lucide="moon" class="w-4 h-4"></i>
+            <i data-lucide="moon" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           </button>
         </div>
       </div>
@@ -264,65 +294,65 @@
   </header>
 
   <!-- Main Workspace -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 pb-24">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-24">
 
     <!-- Top Control Panel Grid -->
-    <div class="no-print grid grid-cols-1 lg:grid-cols-12 gap-5 mb-6">
+    <div class="no-print grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-5 sm:mb-6">
 
       <!-- Upload & Page Range Card -->
-      <section class="lg:col-span-7 surface-card rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4">
+      <section class="lg:col-span-7 surface-card rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col gap-4">
         <div class="flex items-center justify-between gap-2 flex-wrap">
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm">1</span>
-            <h2 class="font-bold text-base">رفع ملزمة PDF</h2>
+            <h2 class="font-bold text-sm sm:text-base">رفع ملزمة PDF</h2>
           </div>
-          <span class="text-xs px-2.5 py-1 rounded-full subtle-box font-semibold">ملفات PDF فقط (.pdf)</span>
+          <span class="text-[11px] sm:text-xs px-2.5 py-1 rounded-full subtle-box font-semibold">ملفات PDF فقط (.pdf)</span>
         </div>
 
         <!-- Dropzone -->
-        <div id="dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer subtle-box hover:border-blue-500">
+        <div id="dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-5 sm:p-6 text-center transition-all cursor-pointer subtle-box hover:border-blue-500">
           <input id="pdfFileInput" type="file" accept=".pdf,application/pdf" class="hidden" />
-          <div class="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-3 flex items-center justify-center">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-2.5 flex items-center justify-center">
             <i data-lucide="file-up" class="w-6 h-6"></i>
           </div>
           <p class="font-bold text-sm sm:text-base mb-1">اسحب ملف الـ PDF هنا أو اضغط للاختيار</p>
-          <p class="text-xs opacity-70 mb-3">تتم معالجة الملف محلياً في متصفحك مع الحفاظ على الصور والرموز والمعادلات</p>
-          <div class="flex items-center justify-center gap-2 flex-wrap">
-            <button type="button" id="chooseFileBtn" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold transition shadow-sm">
+          <p class="text-xs opacity-70 mb-3.5 max-w-md">تتم قراءة الملف محلياً بمتصفحك مع الحفاظ على الرموز والمعادلات وترتيب الفقرات</p>
+          <div class="flex items-center justify-center gap-2 flex-wrap w-full">
+            <button type="button" id="chooseFileBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold transition shadow-sm">
               اختيار ملف PDF
             </button>
-            <button type="button" id="loadSampleBtn" class="px-4 py-2 rounded-xl surface-card hover:border-blue-500 text-xs sm:text-sm font-bold transition">
-              تجربة بملزمة جامعية جاهزة
+            <button type="button" id="loadSampleBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl surface-card hover:border-blue-500 text-xs sm:text-sm font-bold transition">
+              تجربة بملزمة جاهزة
             </button>
           </div>
         </div>
 
         <!-- Loaded File Info + Page Range Selector -->
-        <div id="fileMetaPanel" class="hidden subtle-box rounded-xl p-4 space-y-3">
+        <div id="fileMetaPanel" class="hidden subtle-box rounded-xl p-3.5 sm:p-4 space-y-3">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2.5 min-w-0">
               <i data-lucide="file-text" class="w-5 h-5 text-red-500 shrink-0"></i>
               <div class="min-w-0">
-                <p id="loadedFileName" class="font-bold text-sm truncate">lecture.pdf</p>
-                <p id="loadedFileStats" class="text-xs opacity-75">0 صفحة</p>
+                <p id="loadedFileName" class="font-bold text-xs sm:text-sm truncate">lecture.pdf</p>
+                <p id="loadedFileStats" class="text-[11px] sm:text-xs opacity-75">0 صفحة</p>
               </div>
             </div>
-            <button type="button" id="clearFileBtn" class="text-xs text-red-600 hover:underline font-semibold">إزالة الملف</button>
+            <button type="button" id="clearFileBtn" class="text-xs text-red-600 hover:underline font-bold">إزالة الملف</button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
             <div>
               <label for="pageFromInput" class="block text-xs font-bold mb-1">من صفحة</label>
-              <input id="pageFromInput" type="number" min="1" value="1" class="w-full px-3 py-1.5 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input id="pageFromInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label for="pageToInput" class="block text-xs font-bold mb-1">إلى صفحة</label>
-              <input id="pageToInput" type="number" min="1" value="1" class="w-full px-3 py-1.5 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input id="pageToInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
-            <div class="flex items-end">
-              <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer py-2">
-                <input id="includeOriginalVisuals" type="checkbox" checked class="w-4 h-4 accent-blue-600 rounded" />
-                <span>حفظ لقطات الصفحات والرسوم</span>
+            <div class="col-span-2 sm:col-span-1 flex items-end">
+              <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer py-1.5">
+                <input id="includeOriginalVisuals" type="checkbox" class="w-4 h-4 accent-blue-600 rounded shrink-0" />
+                <span>حفظ صور الصفحات الأصلية</span>
               </label>
             </div>
           </div>
@@ -330,12 +360,12 @@
       </section>
 
       <!-- Translation Engine & Action Card -->
-      <section class="lg:col-span-5 surface-card rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-4">
-        <div class="space-y-4">
-          <div class="flex items-center justify-between gap-2">
+      <section class="lg:col-span-5 surface-card rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-4">
+        <div class="space-y-3.5">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2">
               <span class="w-7 h-7 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm">2</span>
-              <h2 class="font-bold text-base">محرك الترجمة والإعدادات</h2>
+              <h2 class="font-bold text-sm sm:text-base">محرك الترجمة</h2>
             </div>
             <button type="button" id="openApiGuideBtn" class="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
               <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -345,47 +375,44 @@
 
           <!-- Engine Selector -->
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" data-engine="gemini" class="engine-tab p-3 rounded-xl border text-right transition">
-              <div class="flex items-center justify-between mb-1">
+            <button type="button" data-engine="gemini" class="engine-tab p-2.5 sm:p-3 rounded-xl border text-right transition">
+              <div class="flex items-center justify-between gap-1 mb-1">
                 <span class="font-bold text-xs sm:text-sm">Gemini AI</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">الأدق علمياً</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold shrink-0">الأدق</span>
               </div>
-              <p class="text-[11px] opacity-75">ترجمة أكاديمية دقيقة للمصطلحات</p>
+              <p class="text-[11px] opacity-75 leading-snug">ترجمة أكاديمية احترافية</p>
             </button>
 
-            <button type="button" data-engine="free" class="engine-tab p-3 rounded-xl border text-right transition">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-bold text-xs sm:text-sm">ترجمة مجانية</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-300 font-bold">فورية</span>
+            <button type="button" data-engine="free" class="engine-tab p-2.5 sm:p-3 rounded-xl border text-right transition">
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="font-bold text-xs sm:text-sm">ترجمة سريعة</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-300 font-bold shrink-0">مجانية</span>
               </div>
-              <p class="text-[11px] opacity-75">بدون مفتاح API للتجربة السريعة</p>
+              <p class="text-[11px] opacity-75 leading-snug">مباشرة بدون مفتاح API</p>
             </button>
           </div>
 
           <!-- Gemini API Key Box -->
-          <div id="geminiConfigBox" class="subtle-box rounded-xl p-3 space-y-2.5">
+          <div id="geminiConfigBox" class="subtle-box rounded-xl p-3 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <label for="geminiApiKeyInput" class="text-xs font-bold">مفتاح Google Gemini API (مجاني)</label>
               <span id="keyStatusBadge" class="text-[11px] font-semibold opacity-75">غير مربوط</span>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-1.5">
               <input id="geminiApiKeyInput" type="password" dir="ltr" placeholder="AIzaSy..." class="flex-1 min-w-0 px-3 py-2 rounded-lg surface-card text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <button type="button" id="toggleKeyVisibilityBtn" class="px-2.5 rounded-lg surface-card hover:border-blue-500" title="إظهار/إخفاء المفتاح">
+              <button type="button" id="toggleKeyVisibilityBtn" class="px-2.5 rounded-lg surface-card hover:border-blue-500 shrink-0" title="إظهار/إخفاء المفتاح">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
               <button type="button" id="testApiKeyBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 text-white text-xs font-bold shrink-0">
                 فحص
               </button>
             </div>
-            <p class="text-[11px] opacity-75 leading-relaxed">
-              يُحفظ المفتاح داخل متصفحك فقط ولا يُرسل لأي جهة أخرى غير Google.
-            </p>
           </div>
 
           <!-- Translation Style -->
-          <div class="flex items-center justify-between gap-2 text-xs">
-            <label for="translationStyleSelect" class="font-bold shrink-0">أسلوب الترجمة:</label>
-            <select id="translationStyleSelect" class="flex-1 px-3 py-2 rounded-xl surface-card font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <div class="space-y-1">
+            <label for="translationStyleSelect" class="block text-xs font-bold">أسلوب الترجمة:</label>
+            <select id="translationStyleSelect" class="w-full px-3 py-2 rounded-xl surface-card font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="academic">أكاديمي دقيق (يحافظ على المصطلح الإنجليزي المهم بين قوسين)</option>
               <option value="clear">واضح ومبسّط للفهم السريع</option>
             </select>
@@ -393,8 +420,8 @@
         </div>
 
         <!-- Primary Action + Progress -->
-        <div class="space-y-3 pt-2">
-          <div class="flex gap-2">
+        <div class="space-y-2.5 pt-1">
+          <div class="flex gap-2 flex-wrap sm:flex-nowrap">
             <button type="button" id="startTranslateBtn" disabled class="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition">
               <i data-lucide="languages" class="w-4 h-4"></i>
               <span id="startTranslateBtnText">ابدأ ترجمة الملزمة</span>
@@ -409,9 +436,9 @@
 
           <!-- Progress Bar -->
           <div id="progressContainer" class="hidden space-y-1.5">
-            <div class="flex items-center justify-between text-xs font-semibold">
-              <span id="progressLabel">جاري التحضير...</span>
-              <span id="progressPercent">0%</span>
+            <div class="flex items-center justify-between text-xs font-semibold gap-2">
+              <span id="progressLabel" class="truncate">جاري التحضير...</span>
+              <span id="progressPercent" class="shrink-0 font-mono">0%</span>
             </div>
             <div class="w-full h-2.5 rounded-full subtle-box overflow-hidden">
               <div id="progressBar" class="h-full bg-blue-600 transition-all duration-300 rounded-full" style="width: 0%"></div>
@@ -422,44 +449,51 @@
     </div>
 
     <!-- Reader Toolbar (shown when document is ready) -->
-    <section id="readerToolbar" class="no-print hidden surface-card rounded-2xl p-4 mb-5 shadow-sm space-y-3">
-      <div class="flex flex-wrap items-center justify-between gap-3">
+    <section id="readerToolbar" class="no-print hidden surface-card rounded-2xl p-3.5 sm:p-4 mb-5 shadow-sm space-y-3">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <!-- View Modes -->
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-xs font-bold opacity-75 ml-1">طريقة العرض:</span>
-          <button type="button" data-view-mode="interlinear" class="view-mode-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition">
+          <button type="button" data-view-mode="interlinear" class="view-mode-btn px-3 py-2 rounded-xl text-xs font-bold border transition">
             سطر تحت سطر
           </button>
-          <button type="button" data-view-mode="side-by-side" class="view-mode-btn px-3 py-1.5 rounded-xl text-xs font-bold border transition">
-            عمودين للمقارنة
+          <button type="button" data-view-mode="side-by-side" class="view-mode-btn px-3 py-2 rounded-xl text-xs font-bold border transition">
+            عمودين
           </button>
-          <button type="button" id="toggleStudyModeBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold border surface-card hover:border-amber-500 flex items-center gap-1.5 transition">
+          <button type="button" id="toggleStudyModeBtn" class="px-3 py-2 rounded-xl text-xs font-bold border surface-card hover:border-amber-500 flex items-center gap-1.5 transition">
             <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-amber-600"></i>
-            <span>وضع المراجعة والاختبار</span>
+            <span>وضع المراجعة</span>
           </button>
-          <button type="button" id="toggleOriginalPageBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold border surface-card hover:border-blue-500 flex items-center gap-1.5 transition">
+          <button type="button" id="toggleOriginalPageBtn" class="px-3 py-2 rounded-xl text-xs font-bold border surface-card hover:border-blue-500 flex items-center gap-1.5 transition">
             <i data-lucide="image" class="w-3.5 h-3.5 text-blue-600"></i>
-            <span>إظهار الصفحة الأصلية</span>
+            <span>صور الصفحات</span>
+          </button>
+          <button type="button" id="toggleStylePanelBtn" class="sm:hidden px-3 py-2 rounded-xl text-xs font-bold border surface-card flex items-center gap-1">
+            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+            <span>الخط والألوان</span>
           </button>
         </div>
 
         <!-- Export Buttons -->
         <div class="flex items-center gap-2 flex-wrap">
-          <button type="button" id="exportPdfBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
+          <button type="button" id="retryFailedAllBtn" class="hidden px-3 py-2 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>إعادة ترجمة الناقص</span>
+          </button>
+          <button type="button" id="exportPdfBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
             <i data-lucide="printer" class="w-4 h-4"></i>
             <span>تنزيل PDF بالعلامة المائية</span>
           </button>
-          <button type="button" id="exportHtmlBtn" class="px-3 py-2 rounded-xl surface-card hover:border-blue-500 text-xs font-bold flex items-center gap-1.5 transition" title="نسخة HTML مستقلة تعمل بدون إنترنت">
+          <button type="button" id="exportHtmlBtn" class="px-3 py-2.5 rounded-xl surface-card hover:border-blue-500 text-xs font-bold flex items-center justify-center gap-1.5 transition" title="حفظ نسخة HTML مستقلة تعمل بدون إنترنت">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>حفظ نسخة للطباعة</span>
+            <span>حفظ نسخة</span>
           </button>
         </div>
       </div>
 
-      <!-- Typography & Color Settings Row -->
-      <div class="pt-3 border-t border-slate-200/70 dark:border-slate-700/70 flex flex-wrap items-center gap-4 text-xs">
+      <!-- Typography & Color Settings Row (collapsible on small mobile) -->
+      <div id="styleControlsRow" class="hidden sm:flex pt-3 border-t border-slate-200/70 dark:border-slate-700/70 flex-wrap items-center gap-3 sm:gap-4 text-xs">
         <div class="flex items-center gap-2">
-          <label for="arFontSelect" class="font-bold opacity-80">الخط العربي:</label>
+          <label for="arFontSelect" class="font-bold opacity-80">الخط:</label>
           <select id="arFontSelect" class="px-2.5 py-1.5 rounded-lg surface-card font-semibold">
             <option value="'Cairo', sans-serif">Cairo (كايرو)</option>
             <option value="'IBM Plex Sans Arabic', sans-serif">IBM Plex Arabic</option>
@@ -469,19 +503,19 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <label for="enSizeRange" class="font-bold opacity-80">حجم الإنجليزي:</label>
+          <label for="enSizeRange" class="font-bold opacity-80">إنجليزي:</label>
           <input id="enSizeRange" type="range" min="13" max="22" value="16" class="w-20 accent-blue-600" />
-          <span id="enSizeVal" class="font-mono w-7">16px</span>
+          <span id="enSizeVal" class="font-mono w-8">16px</span>
         </div>
 
         <div class="flex items-center gap-2">
-          <label for="arSizeRange" class="font-bold opacity-80">حجم العربي:</label>
+          <label for="arSizeRange" class="font-bold opacity-80">عربي:</label>
           <input id="arSizeRange" type="range" min="13" max="24" value="16" class="w-20 accent-blue-600" />
-          <span id="arSizeVal" class="font-mono w-7">16px</span>
+          <span id="arSizeVal" class="font-mono w-8">16px</span>
         </div>
 
         <div class="flex items-center gap-1.5">
-          <span class="font-bold opacity-80 ml-1">لون الترجمة:</span>
+          <span class="font-bold opacity-80 ml-1">اللون:</span>
           <button type="button" data-ar-color="#1d4ed8" class="color-dot w-5 h-5 rounded-full bg-blue-700 ring-2 ring-offset-2 ring-blue-500" title="أزرق أكاديمي"></button>
           <button type="button" data-ar-color="#047857" class="color-dot w-5 h-5 rounded-full bg-emerald-700" title="أخضر زمردي"></button>
           <button type="button" data-ar-color="#475569" class="color-dot w-5 h-5 rounded-full bg-slate-600" title="رمادي داكن"></button>
@@ -493,8 +527,8 @@
       <!-- Study Mode Helper Banner -->
       <div id="studyModeBanner" class="hidden subtle-box rounded-xl px-3.5 py-2 flex items-center justify-between gap-2 flex-wrap text-xs">
         <div class="flex items-center gap-2">
-          <i data-lucide="eye-off" class="w-4 h-4 text-amber-600"></i>
-          <span class="font-semibold">وضع المراجعة مفعل: اضغط على أي سطر إنكليزي لإظهار أو إخفاء ترجمته العربية.</span>
+          <i data-lucide="eye-off" class="w-4 h-4 text-amber-600 shrink-0"></i>
+          <span class="font-semibold">وضع المراجعة مفعل: اضغط على أي سطر إنكليزي لإظهار أو إخفاء ترجمته.</span>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" id="revealAllBtn" class="px-2.5 py-1 rounded-lg surface-card font-bold hover:border-blue-500">كشف الكل</button>
@@ -504,20 +538,20 @@
     </section>
 
     <!-- Document Output Area -->
-    <section id="documentStage" class="space-y-6">
+    <section id="documentStage" class="space-y-5">
       <!-- Empty State -->
-      <div id="emptyState" class="no-print surface-card rounded-2xl p-10 text-center max-w-2xl mx-auto">
-        <div class="w-16 h-16 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-4 flex items-center justify-center">
-          <i data-lucide="file-check-2" class="w-8 h-8"></i>
+      <div id="emptyState" class="no-print surface-card rounded-2xl p-6 sm:p-10 text-center max-w-2xl mx-auto">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-4 flex items-center justify-center">
+          <i data-lucide="file-check-2" class="w-7 h-7 sm:w-8 sm:h-8"></i>
         </div>
-        <h3 class="text-lg font-extrabold mb-2">جاهز لترجمة ملزمتك الجامعية</h3>
-        <p class="text-sm opacity-75 leading-relaxed mb-5">
-          ارفع أي ملف PDF باللغة الإنجليزية بالأعلى، وسنترجمه لك سطر بسطر مع إمكانية التعديل اليدوي ووضع المراجعة للامتحان، وتنزيله كـ PDF منسّق بعلامة مائية شفافة «إعداد أيمن رعد».
+        <h3 class="text-base sm:text-lg font-extrabold mb-2">جاهز لترجمة ملزمتك الجامعية</h3>
+        <p class="text-xs sm:text-sm opacity-75 leading-relaxed mb-5">
+          ارفع أي ملف PDF إنجليزي بالأعلى وسنترجمه بسرعة ودقة سطر بسطر مع إمكانية التعديل اليدوي ووضع المراجعة وتنزيله كـ PDF منسّق بعلامة مائية شفافة «إعداد أيمن رعد».
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-right">
           <div class="subtle-box rounded-xl p-3">
             <p class="font-bold mb-1">سطر إنكليزي + سطر عربي</p>
-            <p class="opacity-75">ترتيب مريح للعين مع حفظ الأرقام والرموز العلمية.</p>
+            <p class="opacity-75">تدفق مرتب عبر الصفحات بدون تداخل أو قصّ للنصوص.</p>
           </div>
           <div class="subtle-box rounded-xl p-3">
             <p class="font-bold mb-1">تعديل مباشر قبل التحميل</p>
@@ -531,19 +565,19 @@
       </div>
 
       <!-- Translated Pages Container -->
-      <div id="pagesContainer" class="space-y-6 hidden"></div>
+      <div id="pagesContainer" class="space-y-5 hidden"></div>
     </section>
   </main>
 
   <!-- Fixed Bottom-Left Menu ("حول" & "السجل") -->
-  <nav class="no-print fixed bottom-4 left-4 z-40 flex items-center gap-2 surface-card p-1.5 rounded-2xl shadow-lg" aria-label="الأقسام السفلية">
-    <button type="button" id="openHistoryBtn" class="px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+  <nav class="no-print fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-40 flex items-center gap-1.5 surface-card p-1.5 rounded-2xl shadow-lg" aria-label="الأقسام السفلية">
+    <button type="button" id="openHistoryBtn" class="px-3 sm:px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
       <i data-lucide="history" class="w-4 h-4 text-blue-600"></i>
       <span>السجل</span>
       <span id="historyCountBadge" class="text-[11px] px-1.5 py-0.5 rounded-full bg-blue-600 text-white font-bold">0</span>
     </button>
     <div class="w-px h-5 bg-slate-300 dark:bg-slate-700"></div>
-    <button type="button" id="openAboutBtn" class="px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+    <button type="button" id="openAboutBtn" class="px-3 sm:px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
       <i data-lucide="info" class="w-4 h-4 text-blue-600"></i>
       <span>حول</span>
     </button>
@@ -556,57 +590,56 @@
   </footer>
 
   <!-- Modal: About & Step-by-Step Guide ("حول") -->
-  <div id="aboutModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between">
+  <div id="aboutModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-          <h3 class="font-extrabold text-base">حول الموقع ودليل الاستخدام الصحيح</h3>
+          <h3 class="font-extrabold text-sm sm:text-base">حول الموقع ودليل الاستخدام الصحيح</h3>
         </div>
         <button type="button" data-close-modal="aboutModal" class="p-1.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-5 overflow-y-auto space-y-5 text-sm leading-relaxed">
-        <div class="subtle-box rounded-xl p-4">
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 text-sm leading-relaxed">
+        <div class="subtle-box rounded-xl p-3.5 sm:p-4">
           <p class="font-extrabold text-blue-600 mb-1">عن الموقع — إعداد أيمن رعد</p>
           <p class="text-xs sm:text-sm opacity-90">
-            أداة مجانية مخصصة لطلاب الجامعات لترجمة ملازم ومحاضرات الـ PDF الإنجليزية إلى العربية بصيغة <strong>سطر إنكليزي وتحته سطر عربي</strong>، مع الحفاظ على الرموز والصور وإضافة علامة مائية شفافة ومرتبة في خلفية كل صفحة عند التنزيل.
+            أداة مجانية مخصصة لطلاب الجامعات لترجمة ملازم ومحاضرات الـ PDF الإنجليزية إلى العربية بصيغة <strong>سطر إنكليزي وتحته سطر عربي</strong>، مع الحفاظ على الرموز والمعادلات وإضافة علامة مائية شفافة «إعداد أيمن رعد» في خلفية كل صفحة عند التنزيل.
           </p>
         </div>
 
         <div>
-          <h4 class="font-extrabold mb-2 flex items-center gap-2">
+          <h4 class="font-extrabold mb-2 flex items-center gap-2 text-sm">
             <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
             <span>آلية العمل والطريقة الصحيحة للاستخدام بدون أخطاء</span>
           </h4>
           <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm opacity-90">
-            <li><strong>ارفع ملف PDF نصي فقط:</strong> تأكد أن الملف بصيغة <code>.pdf</code> وأن النص فيه قابل للتحديد (الملفات المصورة بالكاميرا تحتاج تحويل نصي أولاً).</li>
-            <li><strong>حدد نطاق الصفحات للملازم الطويلة:</strong> إذا كانت الملزمة 80 صفحة مثلاً، يُفضل ترجمة 15–25 صفحة بكل مرة لضمان أسرع أداء وأعلى دقة.</li>
-            <li><strong>عدّل أي مصطلح قبل التنزيل:</strong> يمكنك النقر على أي جملة مترجمة بالعربي لتعديلها يدوياً، وسيتم حفظ تعديلك تلقائياً.</li>
-            <li><strong>عند تنزيل ملف PDF:</strong> اضغط على «تنزيل PDF بالعلامة المائية»، ومن نافذة الطباعة اختر الوجهة <strong>Save as PDF</strong> وتأكد من تفعيل خيار <strong>Background graphics (رسومات الخلفية)</strong> حتى تظهر العلامة المائية الشفافة «إعداد أيمن رعد» على جميع الصفحات.</li>
+            <li><strong>ارفع ملف PDF نصي فقط:</strong> تأكد أن الملف بصيغة <code>.pdf</code> وأن النص فيه قابل للتحديد.</li>
+            <li><strong>حدد نطاق الصفحات للملازم الطويلة:</strong> للملازم التي تتجاوز 40 صفحة، ترجمة 15–25 صفحة بكل دفعة تعطي أسرع وأدق نتيجة.</li>
+            <li><strong>انتظر وصول شريط التقدم إلى 100%</strong> قبل الضغط على التنزيل حتى تنزل جميع السطور الإنجليزية وتحتها العربية مرتبة بالكامل.</li>
+            <li><strong>عند تنزيل ملف PDF:</strong> اضغط «تنزيل PDF بالعلامة المائية»، ومن نافذة الطباعة اختر <strong>Save as PDF</strong> وفعّل خيار <strong>Background graphics (رسومات الخلفية)</strong> حتى تظهر العلامة المائية «إعداد أيمن رعد» بكل صفحة.</li>
           </ol>
         </div>
 
-        <div class="subtle-box rounded-xl p-4 space-y-2.5 border-blue-500/30">
-          <h4 class="font-extrabold text-blue-700 dark:text-blue-400 flex items-center gap-2">
+        <div class="subtle-box rounded-xl p-3.5 sm:p-4 space-y-2.5 border-blue-500/30">
+          <h4 class="font-extrabold text-blue-700 dark:text-blue-400 flex items-center gap-2 text-sm">
             <i data-lucide="key-round" class="w-4 h-4"></i>
             <span>شلون تجيب مفتاح Google Gemini المجاني للترجمة الأكاديمية الدقيقة؟</span>
           </h4>
           <ol class="list-decimal list-inside space-y-1.5 text-xs sm:text-sm opacity-90">
-            <li>ادخل إلى موقع <strong>Google AI Studio</strong> عبر الرابط: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-bold" dir="ltr">aistudio.google.com/apikey</a> وسجّل الدخول بحسابك في Google.</li>
-            <li>اضغط على زر <strong>Create API key</strong> (إنشاء مفتاح API) — الخدمة مجانية ولا تحتاج بطاقة بنكية.</li>
-            <li>انسخ المفتاح الذي يبدأ بـ <code>AIzaSy...</code> وارجع للموقع هنا.</li>
-            <li>اختر محرك <strong>Gemini AI</strong>، الصق المفتاح في الخانة المخصصة، واضغط <strong>فحص</strong> للتأكد من عمله.</li>
+            <li>افتح موقع <strong>Google AI Studio</strong>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-bold" dir="ltr">aistudio.google.com/apikey</a> وسجّل دخول بحساب Google.</li>
+            <li>اضغط <strong>Create API key</strong> — مجاني تماماً بدون بطاقة بنكية.</li>
+            <li>انسخ المفتاح (يبدأ بـ <code>AIzaSy...</code>) والصقه في خانة <strong>Gemini AI</strong> بالموقع ثم اضغط <strong>فحص</strong>.</li>
           </ol>
           <p class="text-[11px] opacity-75">
-            ملاحظة أمان: مفتاحك يُحفظ داخل متصفحك فقط (LocalStorage) ولا يتم إرساله لأي سيرفر وسيط.
+            مفتاحك يُحفظ بمتصفحك فقط ولا يطلع عليه أحد غيرك.
           </p>
         </div>
       </div>
 
-      <div class="px-5 py-3 border-t border-slate-200/70 dark:border-slate-700 flex justify-end">
+      <div class="px-4 sm:px-5 py-3 border-t border-slate-200/70 dark:border-slate-700 flex justify-end">
         <button type="button" data-close-modal="aboutModal" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700">
           فهمت، إغلاق
         </button>
@@ -615,12 +648,12 @@
   </div>
 
   <!-- Modal: History ("السجل") -->
-  <div id="historyModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between gap-2">
+  <div id="historyModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
-          <h3 class="font-extrabold text-base">سجل الملازم المترجمة سابقاً</h3>
+          <h3 class="font-extrabold text-sm sm:text-base">سجل الملازم المترجمة سابقاً</h3>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" id="clearAllHistoryBtn" class="text-xs font-bold text-red-600 hover:underline px-2 py-1">مسح السجل</button>
@@ -630,28 +663,26 @@
         </div>
       </div>
 
-      <div id="historyListContainer" class="p-5 overflow-y-auto space-y-3 flex-1">
-        <!-- Populated dynamically -->
-      </div>
+      <div id="historyListContainer" class="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1"></div>
     </div>
   </div>
 
-  <!-- Print Helper Modal (explains Save as PDF + Background Graphics clearly) -->
-  <div id="printGuideModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+  <!-- Print Helper Modal -->
+  <div id="printGuideModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
     <div class="surface-card rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">
       <div class="flex items-center gap-2.5">
         <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
           <i data-lucide="printer" class="w-5 h-5"></i>
         </div>
         <div>
-          <h3 class="font-extrabold text-base">جاهز لتنزيل الـ PDF بالعلامة المائية</h3>
-          <p class="text-xs opacity-75">لضمان ظهور «إعداد أيمن رعد» بكل صفحة:</p>
+          <h3 class="font-extrabold text-base">تنزيل الملزمة كـ PDF بالعلامة المائية</h3>
+          <p class="text-xs opacity-75">لظهور «إعداد أيمن رعد» بكل الصفحات بشكل مرتب:</p>
         </div>
       </div>
       <ol class="list-decimal list-inside space-y-1.5 text-xs sm:text-sm opacity-90 subtle-box rounded-xl p-3.5">
         <li>اختر الوجهة: <strong>Save as PDF / حفظ بتنسيق PDF</strong>.</li>
-        <li>من الإعدادات الإضافية فعّل خيار <strong>Background graphics / رسومات الخلفية</strong>.</li>
-        <li>اضغط <strong>Save / حفظ</strong> لتنزيل الملزمة بجودة عالية.</li>
+        <li>فعّل خيار <strong>Background graphics / رسومات الخلفية</strong> من الإعدادات الإضافية.</li>
+        <li>اضغط <strong>Save / حفظ</strong> (كل سطر إنكليزي سيبقى مع ترجمته العربية بدون انقسام).</li>
       </ol>
       <div class="flex items-center justify-end gap-2">
         <button type="button" data-close-modal="printGuideModal" class="px-4 py-2 rounded-xl surface-card text-xs font-bold">إلغاء</button>
@@ -663,24 +694,22 @@
   </div>
 
   <!-- Toast Notification -->
-  <div id="toastContainer" class="no-print fixed top-20 left-1/2 -translate-x-1/2 z-50 space-y-2 pointer-events-none"></div>
+  <div id="toastContainer" class="no-print fixed top-20 left-1/2 -translate-x-1/2 z-50 space-y-2 pointer-events-none w-[92vw] max-w-md flex flex-col items-center"></div>
 
   <script>
     (function () {
       'use strict';
 
-      // Configure PDF.js worker
       if (window.pdfjsLib) {
         window.pdfjsLib.GlobalWorkerOptions.workerSrc =
           'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       }
 
-      // Build repeating diagonal SVG watermark ("إعداد أيمن رعد")
       const WATERMARK_TEXT = 'إعداد أيمن رعد';
-      const watermarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="270" height="190" viewBox="0 0 270 190">
-        <g transform="rotate(-32 135 95)">
-          <text x="135" y="95" text-anchor="middle" dominant-baseline="middle"
-            font-family="Cairo, Arial, sans-serif" font-size="22" font-weight="800" fill="#1e3a8a">
+      const watermarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="175" viewBox="0 0 240 175">
+        <g transform="rotate(-32 120 88)">
+          <text x="120" y="88" text-anchor="middle" dominant-baseline="middle"
+            font-family="Cairo, Arial, sans-serif" font-size="20" font-weight="800" fill="#1e3a8a">
             ${WATERMARK_TEXT}
           </text>
         </g>
@@ -688,9 +717,7 @@
       const watermarkDataUri = `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(watermarkSvg)}")`;
 
       const printWmEl = document.getElementById('printWatermarkFixed');
-      if (printWmEl) {
-        printWmEl.style.backgroundImage = watermarkDataUri;
-      }
+      if (printWmEl) printWmEl.style.backgroundImage = watermarkDataUri;
 
       // Safe localStorage helpers
       function safeGet(key, fallback) {
@@ -707,7 +734,7 @@
         } catch (e) {}
       }
 
-      // IndexedDB History Store (fallback to in-memory if blocked)
+      // IndexedDB History Store
       const DB_NAME = 'AymenPdfTranslatorDB';
       const DB_STORE = 'lectures';
       let memoryHistoryFallback = [];
@@ -732,6 +759,7 @@
       }
 
       async function saveLectureToHistory(record) {
+        if (!record) return;
         try {
           const db = await openHistoryDB();
           await new Promise((resolve, reject) => {
@@ -754,10 +782,7 @@
           return await new Promise((resolve, reject) => {
             const tx = db.transaction(DB_STORE, 'readonly');
             const req = tx.objectStore(DB_STORE).getAll();
-            req.onsuccess = () => {
-              const items = (req.result || []).sort((a, b) => b.timestamp - a.timestamp);
-              resolve(items);
-            };
+            req.onsuccess = () => resolve((req.result || []).sort((a, b) => b.timestamp - a.timestamp));
             req.onerror = () => reject(req.error);
           });
         } catch (e) {
@@ -798,24 +823,29 @@
       // App State
       const state = {
         theme: safeGet('aymen_theme', 'light'),
-        engine: safeGet('aymen_engine', 'gemini'),
+        engine: safeGet('aymen_engine', 'free'), // Default free so it works immediately unless Gemini key is entered
         apiKey: safeGet('aymen_gemini_key', ''),
         style: safeGet('aymen_trans_style', 'academic'),
         arFont: safeGet('aymen_ar_font', "'Cairo', sans-serif"),
         enSize: parseInt(safeGet('aymen_en_size', '16'), 10) || 16,
         arSize: parseInt(safeGet('aymen_ar_size', '16'), 10) || 16,
         arColor: safeGet('aymen_ar_color', '#1d4ed8'),
-        viewMode: 'interlinear', // 'interlinear' | 'side-by-side'
+        viewMode: 'interlinear',
         studyMode: false,
         showOriginalVisuals: false,
         pdfDoc: null,
         fileName: '',
         totalPages: 0,
-        currentLecture: null, // { id, fileName, timestamp, engine, pages: [{ pageNum, imageDataUrl, blocks: [{ en, ar, isHeading, isProtected }] }] }
+        currentLecture: null,
         isTranslating: false,
         isPaused: false,
         cancelRequested: false
       };
+
+      // If user already saved a Gemini API key, prefer Gemini automatically
+      if (state.apiKey && state.apiKey.length > 15 && !safeGet('aymen_engine', '')) {
+        state.engine = 'gemini';
+      }
 
       // DOM References
       const dom = {
@@ -847,6 +877,9 @@
         readerToolbar: document.getElementById('readerToolbar'),
         toggleStudyModeBtn: document.getElementById('toggleStudyModeBtn'),
         toggleOriginalPageBtn: document.getElementById('toggleOriginalPageBtn'),
+        toggleStylePanelBtn: document.getElementById('toggleStylePanelBtn'),
+        styleControlsRow: document.getElementById('styleControlsRow'),
+        retryFailedAllBtn: document.getElementById('retryFailedAllBtn'),
         studyModeBanner: document.getElementById('studyModeBanner'),
         revealAllBtn: document.getElementById('revealAllBtn'),
         hideAllBtn: document.getElementById('hideAllBtn'),
@@ -869,7 +902,6 @@
         toastContainer: document.getElementById('toastContainer')
       };
 
-      // Toast Notification Helper
       function showToast(message, type = 'info') {
         const colors = {
           info: 'bg-slate-900 text-white',
@@ -878,19 +910,16 @@
           warning: 'bg-amber-600 text-white'
         };
         const el = document.createElement('div');
-        el.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-bold transition-all duration-300 opacity-0 translate-y-2`;
+        el.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-bold text-center transition-all duration-300 opacity-0 translate-y-2`;
         el.textContent = message;
         dom.toastContainer.appendChild(el);
-        requestAnimationFrame(() => {
-          el.classList.remove('opacity-0', 'translate-y-2');
-        });
+        requestAnimationFrame(() => el.classList.remove('opacity-0', 'translate-y-2'));
         setTimeout(() => {
           el.classList.add('opacity-0', '-translate-y-2');
           setTimeout(() => el.remove(), 300);
-        }, 3400);
+        }, 3500);
       }
 
-      // Apply Theme & Typography Preferences
       function applyTheme(theme) {
         state.theme = theme;
         document.documentElement.setAttribute('data-theme', theme);
@@ -958,19 +987,22 @@
         dom.toggleOriginalPageBtn.classList.toggle('border-blue-600', state.showOriginalVisuals);
       }
 
-      // Detect if a line is purely symbolic / numeric / formula (protect from translation)
       function isProtectedLine(text) {
         const cleaned = text.trim();
         if (!cleaned) return true;
-        // If no English letters at all, protect it
         if (!/[A-Za-z]/.test(cleaned)) return true;
-        // Very short single-letter/math expression like "x = 2y + 3" or "pH = 7.4"
         const words = cleaned.match(/[A-Za-z]{2,}/g) || [];
-        if (words.length === 0) return true;
-        return false;
+        return words.length === 0;
       }
 
-      // Handle PDF file selection
+      function cleanExtractedText(str) {
+        return str
+          .replace(/\u0000/g, '')
+          .replace(/-\s+([a-z])/g, '$1') // fix hyphenated word wraps
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
       async function handlePdfFile(file) {
         if (!file) return;
         const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -979,15 +1011,14 @@
           return;
         }
         if (!window.pdfjsLib) {
-          showToast('تعذّر تحميل مكتبة قراءة PDF، يرجى التحقق من الاتصال بالإنترنت.', 'error');
+          showToast('تعذّر تحميل مكتبة قراءة PDF، تأكد من الاتصال بالإنترنت.', 'error');
           return;
         }
 
         try {
-          showToast('جاري قراءة ملف الـ PDF...', 'info');
+          showToast('جاري فحص ملف الـ PDF...', 'info');
           const arrayBuffer = await file.arrayBuffer();
-          const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
-          const pdfDoc = await loadingTask.promise;
+          const pdfDoc = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
           state.pdfDoc = pdfDoc;
           state.fileName = file.name;
@@ -1005,19 +1036,18 @@
 
           dom.fileMetaPanel.classList.remove('hidden');
           dom.startTranslateBtn.disabled = false;
-          showToast(`تم تحميل الملف بنجاح (${pdfDoc.numPages} صفحة)`, 'success');
+          showToast(`تم تجهيز الملف (${pdfDoc.numPages} صفحة) — اضغط «ابدأ ترجمة الملزمة»`, 'success');
         } catch (err) {
-          showToast('تعذّر قراءة ملف الـ PDF. تأكد أنه غير محمي بكلمة مرور أو تالف.', 'error');
+          showToast('تعذّر قراءة ملف الـ PDF. تأكد أنه غير تالف أو محمي بكلمة مرور.', 'error');
         }
       }
 
-      // Extract structured text blocks & optional page image from a PDF page
+      // Extract clean logical lines/paragraphs from a PDF page
       async function extractPageData(pdfDoc, pageNum, captureImage) {
         const page = await pdfDoc.getPage(pageNum);
         const textContent = await page.getTextContent();
         const items = textContent.items || [];
 
-        // Group text items into visual lines by Y coordinate
         const rawLines = [];
         for (const item of items) {
           const str = (item.str || '').replace(/\s+/g, ' ');
@@ -1026,7 +1056,7 @@
           const y = item.transform ? item.transform[5] : 0;
           const fontSize = item.transform ? Math.hypot(item.transform[0], item.transform[1]) : 11;
 
-          let matchedLine = rawLines.find((l) => Math.abs(l.y - y) < Math.max(4, fontSize * 0.45));
+          let matchedLine = rawLines.find((l) => Math.abs(l.y - y) < Math.max(4, fontSize * 0.48));
           if (!matchedLine) {
             matchedLine = { y, fontSize, parts: [] };
             rawLines.push(matchedLine);
@@ -1035,29 +1065,26 @@
           matchedLine.fontSize = Math.max(matchedLine.fontSize, fontSize);
         }
 
-        // Sort top-to-bottom (higher Y first in PDF coordinates), and left-to-right within each line
         rawLines.sort((a, b) => b.y - a.y);
         const lines = rawLines
           .map((l) => {
             l.parts.sort((a, b) => a.x - b.x);
             return {
-              text: l.parts.map((p) => p.str).join(' ').replace(/\s+/g, ' ').trim(),
+              text: cleanExtractedText(l.parts.map((p) => p.str).join(' ')),
               y: l.y,
               fontSize: l.fontSize
             };
           })
           .filter((l) => l.text.length > 0);
 
-        // Compute median font size to identify headings
         const sizes = lines.map((l) => l.fontSize).sort((a, b) => a - b);
         const medianSize = sizes.length ? sizes[Math.floor(sizes.length / 2)] : 11;
 
-        // Merge wrapped lines into logical sentences/paragraphs while keeping headings & bullets separate
         const blocks = [];
         for (let i = 0; i < lines.length; i++) {
           const curr = lines[i];
-          const isHeading = curr.fontSize >= medianSize * 1.18 && curr.text.length < 140;
-          const isBullet = /^([•●▪◦\-*]|\d+[\.\)]|[a-zA-Z][\.\)])\s+/.test(curr.text);
+          const isHeading = curr.fontSize >= medianSize * 1.18 && curr.text.length < 150;
+          const isBullet = /^([•●▪◦\-*–—]|\d+[\.\)]|[a-zA-Z][\.\)])\s+/.test(curr.text);
           const prev = blocks[blocks.length - 1];
 
           const verticalGap = i > 0 ? Math.abs(lines[i - 1].y - curr.y) : 999;
@@ -1069,31 +1096,32 @@
             !isHeading &&
             !isBullet &&
             !prevEndsSentence &&
-            verticalGap < curr.fontSize * 1.85 &&
-            prev.en.length < 280
+            verticalGap < curr.fontSize * 1.95 &&
+            prev.en.length < 340
           ) {
-            prev.en = `${prev.en} ${curr.text}`.replace(/\s+/g, ' ').trim();
+            prev.en = cleanExtractedText(`${prev.en} ${curr.text}`);
+            prev.isProtected = isProtectedLine(prev.en);
           } else {
             blocks.push({
               en: curr.text,
               ar: '',
+              status: 'pending', // 'pending' | 'done' | 'error'
               isHeading,
               isProtected: isProtectedLine(curr.text)
             });
           }
         }
 
-        // Optional crisp snapshot of original page (preserves diagrams, frames, tables)
         let imageDataUrl = '';
         if (captureImage) {
           try {
-            const viewport = page.getViewport({ scale: 1.15 });
+            const viewport = page.getViewport({ scale: 1.0 });
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = viewport.width;
             canvas.height = viewport.height;
             await page.render({ canvasContext: ctx, viewport }).promise;
-            imageDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+            imageDataUrl = canvas.toDataURL('image/jpeg', 0.72);
           } catch (e) {
             imageDataUrl = '';
           }
@@ -1102,34 +1130,55 @@
         return { pageNum, imageDataUrl, blocks };
       }
 
-      // Translation: Gemini API (Batch JSON for high academic accuracy)
+      // Fetch with timeout so nothing ever hangs indefinitely
+      async function fetchWithTimeout(url, options = {}, timeoutMs = 22000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          return res;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      // Translation: Gemini API (Indexed JSON object for 100% line alignment & high speed)
       async function translateBatchGemini(lines, apiKey, style) {
         const styleInstruction =
           style === 'academic'
-            ? 'استخدم لغة عربية علمية وأكاديمية دقيقة جداً، واحتفظ بالمصطلح العلمي الإنجليزي المهم بين قوسين بجانب ترجمته العربية عند الضرورة.'
+            ? 'استخدم لغة عربية علمية وأكاديمية دقيقة جداً، واحتفظ بالمصطلح العلمي الإنجليزي المهم بين قوسين بجانب ترجمته العربية.'
             : 'استخدم لغة عربية واضحة ومبسطة وسهلة الفهم للطلاب مع الحفاظ على دقة المعنى العلمي.';
 
-        const prompt = `أنت مترجم أكاديمي جامعي محترف. ترجم مصفوفة الجمل الإنجليزية التالية إلى العربية بدقة عالية.
-القواعد الصارمة:
-1. ${styleInstruction}
-2. حافظ على جميع الرموز العلمية، المعادلات، الأرقام، والوحدات كما هي تماماً بدون تغيير.
-3. أرجع النتيجة بصيغة JSON Array فقط تحتوي على نفس عدد العناصر بالضبط بنفس الترتيب، بدون أي شرح إضافي أو علامات Markdown.
+        const indexedInput = {};
+        lines.forEach((line, idx) => {
+          indexedInput[String(idx)] = line;
+        });
 
-النصوص الإنجليزية:
-${JSON.stringify(lines)}`;
+        const prompt = `أنت مترجم أكاديمي جامعي محترف. ترجم القيم الإنجليزية في كائن JSON التالي إلى العربية بدقة عالية.
+القواعد:
+1. ${styleInstruction}
+2. حافظ على الأرقام، الرموز، المعادلات، والوحدات العلمية كما هي.
+3. أرجع كائن JSON فقط بنفس المفاتيح الرقمية ("0", "1", ...) بدون أي نص خارجي.
+
+البيانات:
+${JSON.stringify(indexedInput)}`;
 
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.15,
-              responseMimeType: 'application/json'
-            }
-          })
-        });
+        const res = await fetchWithTimeout(
+          url,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.15,
+                responseMimeType: 'application/json'
+              }
+            })
+          },
+          28000
+        );
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -1141,47 +1190,169 @@ ${JSON.stringify(lines)}`;
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const cleaned = rawText.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
         const parsed = JSON.parse(cleaned);
-        if (!Array.isArray(parsed) || parsed.length !== lines.length) {
-          throw new Error('استجابة غير متطابقة من النموذج، سيتم المحاولة بالتفصيل.');
-        }
-        return parsed.map((t) => String(t || '').trim());
+
+        return lines.map((_, idx) => {
+          const val = Array.isArray(parsed) ? parsed[idx] : parsed[String(idx)];
+          return val ? String(val).trim() : '';
+        });
       }
 
-      // Translation: Free Instant Engine (Google gtx endpoint -> MyMemory fallback)
+      // Single-line reliable free translator (Google gtx -> clients5 -> MyMemory)
       async function translateSingleFree(text) {
+        const q = text.trim();
+        if (!q) return '';
+
+        // Provider 1: Google Translate gtx
         try {
-          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(text)}`;
-          const res = await fetch(url);
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(q)}`;
+          const res = await fetchWithTimeout(url, {}, 12000);
           if (res.ok) {
             const data = await res.json();
             if (Array.isArray(data) && Array.isArray(data[0])) {
-              return data[0].map((part) => part[0] || '').join('').trim();
+              const out = data[0].map((p) => (p && p[0]) || '').join('').trim();
+              if (out) return out;
             }
           }
         } catch (e) {}
 
-        // Fallback to MyMemory
-        const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 480))}&langpair=en|ar`;
-        const mmRes = await fetch(mmUrl);
-        if (!mmRes.ok) throw new Error('تعذّر الاتصال بمحرك الترجمة المجاني.');
-        const mmData = await mmRes.json();
-        return (mmData?.responseData?.translatedText || '').trim();
+        // Provider 2: MyMemory API
+        try {
+          const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q.slice(0, 490))}&langpair=en|ar`;
+          const mmRes = await fetchWithTimeout(mmUrl, {}, 12000);
+          if (mmRes.ok) {
+            const mmData = await mmRes.json();
+            const out = (mmData?.responseData?.translatedText || '').trim();
+            if (out && !/MYMEMORY WARNING/i.test(out)) return out;
+          }
+        } catch (e) {}
+
+        return '';
       }
 
+      // Fast Batched Free Translator (joins lines into 1 request -> 10x faster, auto-splits on mismatch)
       async function translateBatchFree(lines) {
-        const results = [];
-        for (const line of lines) {
-          if (state.cancelRequested) break;
-          while (state.isPaused && !state.cancelRequested) {
-            await new Promise((r) => setTimeout(r, 250));
-          }
-          const translated = await translateSingleFree(line);
-          results.push(translated);
+        if (lines.length === 1) {
+          return [await translateSingleFree(lines[0])];
         }
+
+        // Group lines into ~1200-char payload using unique delimiter
+        const DELIM = '\n⟪L⟫\n';
+        const joined = lines.join(DELIM);
+
+        if (joined.length <= 1600) {
+          try {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(joined)}`;
+            const res = await fetchWithTimeout(url, {}, 16000);
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data) && Array.isArray(data[0])) {
+                const fullTranslated = data[0].map((p) => (p && p[0]) || '').join('');
+                const parts = fullTranslated.split(/\s*⟪\s*L\s*⟫\s*/i).map((s) => s.trim());
+                if (parts.length === lines.length && parts.every((p) => p.length > 0)) {
+                  return parts;
+                }
+              }
+            }
+          } catch (e) {}
+        }
+
+        // Concurrent fallback for each line in this small batch (parallel pool of 4)
+        const results = new Array(lines.length).fill('');
+        const concurrency = 4;
+        let cursor = 0;
+
+        async function worker() {
+          while (cursor < lines.length) {
+            const idx = cursor++;
+            if (state.cancelRequested) return;
+            results[idx] = await translateSingleFree(lines[idx]);
+          }
+        }
+
+        await Promise.all(Array.from({ length: Math.min(concurrency, lines.length) }, () => worker()));
         return results;
       }
 
-      // Start Translation Workflow
+      // Translate an array of item descriptors [{ pgIdx, blkIdx, text }] with batching & concurrency
+      async function runTranslationItems(items, onItemDone) {
+        const isGemini = state.engine === 'gemini';
+        const batches = [];
+
+        if (isGemini) {
+          // Up to 22 lines or ~2800 chars per Gemini batch
+          let current = [];
+          let charCount = 0;
+          for (const item of items) {
+            if (current.length >= 22 || (charCount + item.text.length > 2800 && current.length > 0)) {
+              batches.push(current);
+              current = [];
+              charCount = 0;
+            }
+            current.push(item);
+            charCount += item.text.length;
+          }
+          if (current.length) batches.push(current);
+        } else {
+          // Up to 10 lines or ~1300 chars per Free batch
+          let current = [];
+          let charCount = 0;
+          for (const item of items) {
+            if (current.length >= 10 || (charCount + item.text.length > 1300 && current.length > 0)) {
+              batches.push(current);
+              current = [];
+              charCount = 0;
+            }
+            current.push(item);
+            charCount += item.text.length;
+          }
+          if (current.length) batches.push(current);
+        }
+
+        let batchIdx = 0;
+        const maxParallel = isGemini ? 2 : 3;
+
+        async function batchWorker() {
+          while (batchIdx < batches.length) {
+            if (state.cancelRequested) return;
+            while (state.isPaused && !state.cancelRequested) {
+              await new Promise((r) => setTimeout(r, 250));
+            }
+            if (state.cancelRequested) return;
+
+            const currentBatch = batches[batchIdx++];
+            const texts = currentBatch.map((b) => b.text);
+            let translated = [];
+
+            try {
+              if (isGemini) {
+                translated = await translateBatchGemini(texts, state.apiKey, state.style);
+              } else {
+                translated = await translateBatchFree(texts);
+              }
+            } catch (err) {
+              // One clean retry before falling back to free engine or marking error
+              try {
+                await new Promise((r) => setTimeout(r, 700));
+                if (isGemini) {
+                  translated = await translateBatchGemini(texts, state.apiKey, state.style);
+                } else {
+                  translated = await translateBatchFree(texts);
+                }
+              } catch (err2) {
+                translated = new Array(texts.length).fill('');
+              }
+            }
+
+            currentBatch.forEach((item, idx) => {
+              const arText = (translated[idx] || '').trim();
+              onItemDone(item, arText);
+            });
+          }
+        }
+
+        await Promise.all(Array.from({ length: Math.min(maxParallel, batches.length) }, () => batchWorker()));
+      }
+
       async function startTranslation() {
         if (!state.pdfDoc || state.isTranslating) return;
 
@@ -1193,7 +1364,7 @@ ${JSON.stringify(lines)}`;
         }
 
         if (state.engine === 'gemini' && (!state.apiKey || state.apiKey.trim().length < 15)) {
-          showToast('أدخل مفتاح Gemini API أولاً أو بدّل إلى «ترجمة مجانية» للتجربة الفورية.', 'warning');
+          showToast('أدخل مفتاح Gemini API أولاً أو اختر «ترجمة سريعة» المجانية.', 'warning');
           dom.geminiApiKeyInput.focus();
           return;
         }
@@ -1208,7 +1379,7 @@ ${JSON.stringify(lines)}`;
         dom.pauseResumeBtn.textContent = 'إيقاف مؤقت';
         dom.cancelTranslateBtn.classList.remove('hidden');
         dom.progressContainer.classList.remove('hidden');
-        updateProgress(2, 'جاري استخراج النصوص والصور من صفحات PDF...');
+        updateProgress(3, 'جاري قراءة وترتيب نصوص PDF...');
 
         const captureVisuals = dom.includeOriginalVisuals.checked;
         const lecture = {
@@ -1222,94 +1393,81 @@ ${JSON.stringify(lines)}`;
 
         try {
           const totalSelected = toPage - fromPage + 1;
-
-          // Phase 1: Extract pages
           for (let p = fromPage; p <= toPage; p++) {
             if (state.cancelRequested) break;
             const pageData = await extractPageData(state.pdfDoc, p, captureVisuals);
             lecture.pages.push(pageData);
-            const pct = Math.round(((p - fromPage + 1) / totalSelected) * 20);
-            updateProgress(pct, `استخراج محتوى الصفحة ${p} من ${toPage}...`);
+            const pct = Math.round(((p - fromPage + 1) / totalSelected) * 15);
+            updateProgress(pct, `استخراج الصفحة ${p} من ${toPage}...`);
           }
 
           if (state.cancelRequested) {
-            showToast('تم إلغاء عملية الترجمة.', 'warning');
+            showToast('تم إلغاء العملية.', 'warning');
             return;
           }
 
-          // Count translatable blocks
           const allTranslatable = [];
           lecture.pages.forEach((pg, pgIdx) => {
             pg.blocks.forEach((blk, blkIdx) => {
               if (blk.isProtected) {
                 blk.ar = blk.en;
+                blk.status = 'done';
               } else {
                 allTranslatable.push({ pgIdx, blkIdx, text: blk.en });
               }
             });
           });
 
+          state.currentLecture = lecture;
+          if (captureVisuals) state.showOriginalVisuals = true;
+          renderCurrentLecture();
+
           if (allTranslatable.length === 0) {
-            showToast('لم يتم العثور على نصوص إنجليزية قابلة للترجمة (قد يكون الملف مصوراً/سكان).', 'warning');
-            state.currentLecture = lecture;
-            renderCurrentLecture();
+            showToast('لم يتم العثور على نصوص إنجليزية قابلة للاستخراج (قد يكون الملف صوراً ممسوحة ضوئياً).', 'warning');
             return;
           }
 
-          // Show initial extracted pages immediately while translating
-          state.currentLecture = lecture;
-          renderCurrentLecture();
-
-          // Phase 2: Translate in batches
-          const BATCH_SIZE = state.engine === 'gemini' ? 12 : 4;
           let completed = 0;
+          let failedCount = 0;
 
-          for (let i = 0; i < allTranslatable.length; i += BATCH_SIZE) {
-            if (state.cancelRequested) break;
-            while (state.isPaused && !state.cancelRequested) {
-              updateProgress(
-                Math.round(20 + (completed / allTranslatable.length) * 80),
-                'متوقف مؤقتاً — اضغط «استئناف» للمتابعة'
-              );
-              await new Promise((r) => setTimeout(r, 250));
-            }
-            if (state.cancelRequested) break;
-
-            const batch = allTranslatable.slice(i, i + BATCH_SIZE);
-            const texts = batch.map((b) => b.text);
-            let translatedList = [];
-
-            if (state.engine === 'gemini') {
-              try {
-                translatedList = await translateBatchGemini(texts, state.apiKey, state.style);
-              } catch (gemErr) {
-                // Retry once per-item with free fallback or show error
-                showToast(gemErr.message, 'error');
-                throw gemErr;
-              }
+          await runTranslationItems(allTranslatable, (item, arText) => {
+            const blk = lecture.pages[item.pgIdx].blocks[item.blkIdx];
+            if (arText) {
+              blk.ar = arText;
+              blk.status = 'done';
             } else {
-              translatedList = await translateBatchFree(texts);
+              blk.ar = '';
+              blk.status = 'error';
+              failedCount++;
             }
-
-            batch.forEach((item, idx) => {
-              const translatedText = translatedList[idx] || '';
-              lecture.pages[item.pgIdx].blocks[item.blkIdx].ar = translatedText;
-              const arEl = document.getElementById(`ar-${item.pgIdx}-${item.blkIdx}`);
-              if (arEl) arEl.textContent = translatedText;
-            });
-
-            completed += batch.length;
-            const pct = Math.min(100, Math.round(20 + (completed / allTranslatable.length) * 80));
+            updateSingleBlockDom(item.pgIdx, item.blkIdx, blk);
+            completed++;
+            const pct = Math.min(100, Math.round(15 + (completed / allTranslatable.length) * 85));
             updateProgress(pct, `تمت ترجمة ${completed} من ${allTranslatable.length} سطر...`);
-          }
+          });
+
+          // Mark any remaining pending blocks cleanly so "جاري الترجمة..." NEVER stays stuck
+          lecture.pages.forEach((pg) => {
+            pg.blocks.forEach((blk) => {
+              if (blk.status === 'pending') {
+                blk.status = 'error';
+                failedCount++;
+              }
+            });
+          });
 
           if (!state.cancelRequested) {
-            updateProgress(100, 'اكتملت الترجمة بنجاح!');
+            updateProgress(100, failedCount > 0 ? `اكتملت الترجمة (مع ${failedCount} سطر يحتاج إعادة محاولة)` : 'اكتملت الترجمة بنجاح 100%!');
             await saveLectureToHistory(lecture);
-            showToast('اكتملت ترجمة الملزمة وحُفظت في السجل!', 'success');
+            showToast(
+              failedCount > 0
+                ? `اكتملت الترجمة مع ${failedCount} سطر متعثر — اضغط «إعادة ترجمة الناقص».`
+                : 'اكتملت ترجمة الملزمة بنجاح وحُفظت في السجل!',
+              failedCount > 0 ? 'warning' : 'success'
+            );
           }
         } catch (err) {
-          showToast(err.message || 'حدث خطأ أثناء الترجمة، تحقق من الاتصال أو المفتاح.', 'error');
+          showToast(err.message || 'حدث خطأ أثناء الترجمة.', 'error');
         } finally {
           state.isTranslating = false;
           state.isPaused = false;
@@ -1317,6 +1475,70 @@ ${JSON.stringify(lines)}`;
           dom.startTranslateBtnText.textContent = 'ابدأ ترجمة الملزمة';
           dom.pauseResumeBtn.classList.add('hidden');
           dom.cancelTranslateBtn.classList.add('hidden');
+          if (state.currentLecture) {
+            renderCurrentLecture();
+          }
+        }
+      }
+
+      // Retry any failed lines in the current lecture
+      async function retryFailedBlocks() {
+        if (!state.currentLecture || state.isTranslating) return;
+        const missing = [];
+        state.currentLecture.pages.forEach((pg, pgIdx) => {
+          pg.blocks.forEach((blk, blkIdx) => {
+            if (!blk.isProtected && (!blk.ar || blk.status === 'error')) {
+              blk.status = 'pending';
+              missing.push({ pgIdx, blkIdx, text: blk.en });
+            }
+          });
+        });
+        if (missing.length === 0) {
+          showToast('جميع السطور مترجمة بالفعل!', 'success');
+          return;
+        }
+
+        state.isTranslating = true;
+        state.cancelRequested = false;
+        dom.progressContainer.classList.remove('hidden');
+        updateProgress(5, `إعادة ترجمة ${missing.length} سطر...`);
+
+        let done = 0;
+        await runTranslationItems(missing, (item, arText) => {
+          const blk = state.currentLecture.pages[item.pgIdx].blocks[item.blkIdx];
+          if (arText) {
+            blk.ar = arText;
+            blk.status = 'done';
+          } else {
+            blk.status = 'error';
+          }
+          updateSingleBlockDom(item.pgIdx, item.blkIdx, blk);
+          done++;
+          updateProgress(Math.round((done / missing.length) * 100), `إعادة الترجمة: ${done} من ${missing.length}...`);
+        });
+
+        state.isTranslating = false;
+        await saveLectureToHistory(state.currentLecture);
+        renderCurrentLecture();
+        showToast('تم تحديث السطور الناقصة!', 'success');
+      }
+
+      function updateSingleBlockDom(pgIdx, blkIdx, blk) {
+        const arEl = document.getElementById(`ar-${pgIdx}-${blkIdx}`);
+        const retryBtn = document.getElementById(`retry-${pgIdx}-${blkIdx}`);
+        if (!arEl) return;
+
+        if (blk.status === 'done' && blk.ar) {
+          arEl.textContent = blk.ar;
+          arEl.classList.remove('opacity-50', 'italic', 'text-amber-600');
+          if (retryBtn) retryBtn.classList.add('hidden');
+        } else if (blk.status === 'error') {
+          arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط على زر الإعادة أو عدّله يدوياً';
+          arEl.classList.add('text-amber-600', 'italic');
+          if (retryBtn) retryBtn.classList.remove('hidden');
+        } else {
+          arEl.textContent = 'جاري الترجمة...';
+          arEl.classList.add('opacity-50', 'italic');
         }
       }
 
@@ -1326,7 +1548,17 @@ ${JSON.stringify(lines)}`;
         dom.progressLabel.textContent = label;
       }
 
-      // Render Translated Lecture Pages
+      function countFailedBlocks(lecture) {
+        if (!lecture || !lecture.pages) return 0;
+        let count = 0;
+        lecture.pages.forEach((pg) => {
+          pg.blocks.forEach((b) => {
+            if (!b.isProtected && (!b.ar || b.status === 'error')) count++;
+          });
+        });
+        return count;
+      }
+
       function renderCurrentLecture() {
         const lecture = state.currentLecture;
         if (!lecture || !lecture.pages || lecture.pages.length === 0) {
@@ -1339,51 +1571,53 @@ ${JSON.stringify(lines)}`;
         dom.emptyState.classList.add('hidden');
         dom.pagesContainer.classList.remove('hidden');
         dom.readerToolbar.classList.remove('hidden');
+
+        const failedCount = countFailedBlocks(lecture);
+        dom.retryFailedAllBtn.classList.toggle('hidden', failedCount === 0 || state.isTranslating);
+
         dom.pagesContainer.innerHTML = '';
 
         lecture.pages.forEach((page, pgIdx) => {
           const pageEl = document.createElement('article');
-          pageEl.className = 'bilingual-page rounded-2xl p-5 sm:p-8 shadow-sm';
+          pageEl.className = 'bilingual-page rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-sm';
 
-          // Screen watermark layer
           const wmLayer = document.createElement('div');
           wmLayer.className = 'watermark-layer';
           wmLayer.style.backgroundImage = watermarkDataUri;
           pageEl.appendChild(wmLayer);
 
           const contentLayer = document.createElement('div');
-          contentLayer.className = 'page-content-layer space-y-4';
+          contentLayer.className = 'page-content-layer space-y-3.5';
 
           // Page Header
           const header = document.createElement('div');
-          header.className = 'flex items-center justify-between gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-700/80 text-xs';
+          header.className = 'page-header-bar flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200/80 dark:border-slate-700/80 text-xs';
           header.innerHTML = `
-            <div class="flex items-center gap-2 font-bold">
-              <span class="px-2.5 py-1 rounded-lg bg-blue-600/10 text-blue-700 dark:text-blue-300">صفحة ${page.pageNum}</span>
-              <span class="opacity-75 truncate max-w-[200px] sm:max-w-md">${escapeHtml(lecture.fileName)}</span>
+            <div class="flex items-center gap-2 font-bold min-w-0">
+              <span class="px-2.5 py-1 rounded-lg bg-blue-600/10 text-blue-700 dark:text-blue-300 shrink-0">صفحة ${page.pageNum}</span>
+              <span class="opacity-75 truncate">${escapeHtml(lecture.fileName)}</span>
             </div>
-            <span class="opacity-65 font-bold">${WATERMARK_TEXT}</span>
+            <span class="opacity-65 font-bold shrink-0">${WATERMARK_TEXT}</span>
           `;
           contentLayer.appendChild(header);
 
-          // Optional Original Page Visual Snapshot
+          // Optional Original Page Snapshot
           if (state.showOriginalVisuals && page.imageDataUrl) {
             const imgWrap = document.createElement('div');
-            imgWrap.className = 'mb-4 p-2 rounded-xl subtle-box text-center';
+            imgWrap.className = 'mb-3 p-2 rounded-xl subtle-box text-center';
             imgWrap.innerHTML = `
-              <p class="text-[11px] font-bold opacity-70 mb-2">لقطة الصفحة الأصلية (للحفاظ على الرسوم والجداول)</p>
-              <img src="${page.imageDataUrl}" alt="صفحة ${page.pageNum}" class="max-w-full max-h-[420px] mx-auto rounded-lg border border-slate-200 dark:border-slate-700" />
+              <p class="text-[11px] font-bold opacity-70 mb-2">لقطة الصفحة الأصلية ${page.pageNum}</p>
+              <img src="${page.imageDataUrl}" alt="صفحة ${page.pageNum}" class="max-w-full max-h-[380px] mx-auto rounded-lg border border-slate-200 dark:border-slate-700" />
             `;
             contentLayer.appendChild(imgWrap);
           }
 
-          // Blocks Container
           const blocksWrap = document.createElement('div');
-          blocksWrap.className = 'space-y-3';
+          blocksWrap.className = 'space-y-2.5';
 
-          if (page.blocks.length === 0) {
+          if (!page.blocks || page.blocks.length === 0) {
             const emptyPg = document.createElement('p');
-            emptyPg.className = 'text-xs opacity-70 text-center py-6';
+            emptyPg.className = 'text-xs opacity-70 text-center py-5';
             emptyPg.textContent = 'لا يوجد نص قابل للاستخراج في هذه الصفحة.';
             blocksWrap.appendChild(emptyPg);
           } else {
@@ -1391,15 +1625,15 @@ ${JSON.stringify(lines)}`;
               const row = document.createElement('div');
               const isSide = state.viewMode === 'side-by-side';
               row.className = isSide
-                ? 'bilingual-block grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/30'
-                : 'bilingual-block p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/30 space-y-1.5';
+                ? 'bilingual-block grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4 p-3 sm:p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35'
+                : 'bilingual-block p-3 sm:p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35 space-y-1.5';
 
               const enEl = document.createElement('div');
-              enEl.className = `en-line ${blk.isHeading ? 'font-bold text-lg' : ''}`;
+              enEl.className = `en-line ${blk.isHeading ? 'font-bold text-base sm:text-lg' : ''}`;
               enEl.textContent = blk.en;
 
               const arWrap = document.createElement('div');
-              arWrap.className = 'relative group flex items-start gap-2';
+              arWrap.className = 'flex items-start gap-2';
 
               const arEl = document.createElement('div');
               arEl.id = `ar-${pgIdx}-${blkIdx}`;
@@ -1408,28 +1642,69 @@ ${JSON.stringify(lines)}`;
               arEl.setAttribute('contenteditable', 'true');
               arEl.setAttribute('spellcheck', 'false');
               arEl.setAttribute('title', 'اضغط لتعديل الترجمة يدوياً');
-              arEl.textContent = blk.ar || (state.isTranslating ? 'جاري الترجمة...' : '');
 
-              // Save inline edit on blur
+              if (blk.ar) {
+                arEl.textContent = blk.ar;
+              } else if (state.isTranslating && blk.status === 'pending') {
+                arEl.textContent = 'جاري الترجمة...';
+                arEl.classList.add('opacity-50', 'italic');
+              } else {
+                arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط على زر الإعادة أو عدّله يدوياً';
+                arEl.classList.add('text-amber-600', 'italic');
+              }
+
               arEl.addEventListener('blur', () => {
                 const updated = arEl.textContent.trim();
-                if (updated !== blk.ar) {
+                if (updated && updated !== blk.ar && !updated.startsWith('تعذرت ترجمة')) {
                   blk.ar = updated;
+                  blk.status = 'done';
+                  arEl.classList.remove('text-amber-600', 'italic', 'opacity-50');
                   saveLectureToHistory(state.currentLecture);
                 }
               });
 
-              // Study mode click-to-reveal
-              row.addEventListener('click', (e) => {
+              const retryBtn = document.createElement('button');
+              retryBtn.type = 'button';
+              retryBtn.id = `retry-${pgIdx}-${blkIdx}`;
+              retryBtn.className = `retry-line-btn no-print px-2 py-1 rounded-lg bg-amber-500/15 text-amber-700 text-[11px] font-bold shrink-0 ${blk.ar || (state.isTranslating && blk.status === 'pending') ? 'hidden' : ''}`;
+              retryBtn.textContent = 'إعادة';
+              retryBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                retryBtn.disabled = true;
+                retryBtn.textContent = '...';
+                let resText = '';
+                try {
+                  if (state.engine === 'gemini' && state.apiKey.length > 15) {
+                    const arr = await translateBatchGemini([blk.en], state.apiKey, state.style);
+                    resText = arr[0] || '';
+                  } else {
+                    resText = await translateSingleFree(blk.en);
+                  }
+                } catch (err) {
+                  resText = await translateSingleFree(blk.en);
+                }
+                if (resText) {
+                  blk.ar = resText;
+                  blk.status = 'done';
+                  updateSingleBlockDom(pgIdx, blkIdx, blk);
+                  saveLectureToHistory(state.currentLecture);
+                } else {
+                  showToast('تعذّر الاتصال بمحرك الترجمة، حاول مجدداً.', 'error');
+                }
+                retryBtn.disabled = false;
+                retryBtn.textContent = 'إعادة';
+              });
+
+              row.addEventListener('click', () => {
                 if (!state.studyMode) return;
                 if (document.activeElement === arEl) return;
                 arEl.classList.toggle('revealed');
               });
 
               arWrap.appendChild(arEl);
+              arWrap.appendChild(retryBtn);
 
               if (isSide) {
-                // In RTL grid: right column is Arabic, left column is English
                 row.appendChild(arWrap);
                 row.appendChild(enEl);
               } else {
@@ -1457,7 +1732,7 @@ ${JSON.stringify(lines)}`;
           .replace(/"/g, '&quot;');
       }
 
-      // Load Sample University Lecture (so user can test immediately)
+      // Sample University Lecture
       async function loadSampleLecture() {
         const sample = {
           id: 'sample_lecture_demo',
@@ -1473,30 +1748,35 @@ ${JSON.stringify(lines)}`;
                 {
                   en: 'Lecture 1: Structure and Function of the Plasma Membrane',
                   ar: 'المحاضرة 1: تركيب ووظيفة الغشاء البلازمي (Plasma Membrane)',
+                  status: 'done',
                   isHeading: true,
                   isProtected: false
                 },
                 {
                   en: 'The plasma membrane is a selectively permeable phospholipid bilayer that surrounds all living cells.',
                   ar: 'الغشاء البلازمي هو طبقة ثنائية من الدهون المفسفرة (Phospholipid Bilayer) ذات نفاذية اختيارية تحيط بجميع الخلايا الحية.',
+                  status: 'done',
                   isHeading: false,
                   isProtected: false
                 },
                 {
                   en: 'Embedded proteins act as channels, carriers, and receptors to regulate the transport of ions and molecules.',
                   ar: 'تعمل البروتينات المدمجة كقنوات ونواقل ومستقبلات لتنظيم انتقال الأيونات والجزيئات عبر الغشاء.',
+                  status: 'done',
                   isHeading: false,
                   isProtected: false
                 },
                 {
                   en: 'ΔG = RT ln(C2 / C1) + zFΔΨ',
                   ar: 'ΔG = RT ln(C2 / C1) + zFΔΨ',
+                  status: 'done',
                   isHeading: false,
                   isProtected: true
                 },
                 {
                   en: 'Active transport requires metabolic energy in the form of ATP to move substances against their concentration gradient.',
                   ar: 'يتطلب النقل النشط (Active Transport) طاقة أيضية على شكل جزيئات ATP لنقل المواد عكس تدرج تركيزها.',
+                  status: 'done',
                   isHeading: false,
                   isProtected: false
                 }
@@ -1509,18 +1789,21 @@ ${JSON.stringify(lines)}`;
                 {
                   en: 'Key Summary for Exam Review',
                   ar: 'ملخص أساسي لمراجعة الامتحان',
+                  status: 'done',
                   isHeading: true,
                   isProtected: false
                 },
                 {
                   en: '1. Passive diffusion occurs down the concentration gradient without energy expenditure.',
                   ar: '1. الانتشار السلبي (Passive Diffusion) يحدث مع تدرج التركيز دون استهلاك للطاقة.',
+                  status: 'done',
                   isHeading: false,
                   isProtected: false
                 },
                 {
                   en: '2. Osmosis specifically refers to the movement of water molecules across a semipermeable membrane.',
                   ar: '2. التناضح (Osmosis) يشير تحديداً إلى حركة جزيئات الماء عبر غشاء شبه منفذ.',
+                  status: 'done',
                   isHeading: false,
                   isProtected: false
                 }
@@ -1532,30 +1815,39 @@ ${JSON.stringify(lines)}`;
         state.currentLecture = sample;
         renderCurrentLecture();
         await saveLectureToHistory(sample);
-        showToast('تم تحميل ملزمة عيّنة جاهزة للتجربة — جرّب التعديل اليدوي ووضع المراجعة والتنزيل!', 'success');
+        showToast('تم تحميل ملزمة عيّنة جاهزة للتجربة!', 'success');
       }
 
-      // Export Standalone Printable HTML File (Backup download with embedded watermark)
+      // Export Standalone Clean Printable HTML (guarantees both English & Arabic + repeating diagonal watermark)
       function exportStandaloneHtml() {
         if (!state.currentLecture) return;
+        if (state.isTranslating) {
+          showToast('انتظر اكتمال الترجمة أولاً قبل حفظ الملف.', 'warning');
+          return;
+        }
         const lecture = state.currentLecture;
         const pagesHtml = lecture.pages
           .map((pg) => {
+            const imgHtml =
+              state.showOriginalVisuals && pg.imageDataUrl
+                ? `<div class="orig-img"><img src="${pg.imageDataUrl}" alt="صفحة ${pg.pageNum}" /></div>`
+                : '';
             const blocksHtml = pg.blocks
               .map(
                 (b) => `
                 <div class="block">
                   <div class="en ${b.isHeading ? 'heading' : ''}">${escapeHtml(b.en)}</div>
-                  <div class="ar ${b.isHeading ? 'heading' : ''}">${escapeHtml(b.ar)}</div>
+                  <div class="ar ${b.isHeading ? 'heading' : ''}">${escapeHtml(b.ar || '')}</div>
                 </div>`
               )
               .join('');
             return `
-              <section class="page">
+              <section class="page-section">
                 <div class="page-head">
-                  <span>صفحة ${pg.pageNum} — ${escapeHtml(lecture.fileName)}</span>
+                  <span>صفحة أصلية ${pg.pageNum} — ${escapeHtml(lecture.fileName)}</span>
                   <span>${WATERMARK_TEXT}</span>
                 </div>
+                ${imgHtml}
                 ${blocksHtml}
               </section>`;
           })
@@ -1565,24 +1857,30 @@ ${JSON.stringify(lines)}`;
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${escapeHtml(lecture.fileName)} — ${WATERMARK_TEXT}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
-  @page { size: A4; margin: 14mm 12mm; }
-  body { font-family: ${state.arFont}; margin: 0; padding: 24px; background: #fff; color: #0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .wm { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.095; background-image: ${watermarkDataUri}; background-repeat: repeat; background-size: 250px 175px; }
+  @page { size: A4 portrait; margin: 14mm 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: ${state.arFont}; margin: 0; padding: 20px; background: #fff; color: #0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wm { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.095; background-image: ${watermarkDataUri}; background-repeat: repeat; background-size: 240px 170px; }
   .wrap { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; }
-  .page { page-break-after: always; margin-bottom: 28px; }
-  .page:last-child { page-break-after: auto; }
-  .page-head { display: flex; justify-content: space-between; font-size: 12px; color: #475569; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 14px; font-weight: 700; }
-  .block { margin-bottom: 12px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; break-inside: avoid; }
-  .en { font-family: 'Inter', sans-serif; font-size: ${state.enSize}px; direction: ltr; text-align: left; color: #0f172a; line-height: 1.65; margin-bottom: 4px; }
-  .ar { font-family: ${state.arFont}; font-size: ${state.arSize}px; direction: rtl; text-align: right; color: ${state.arColor}; line-height: 1.75; }
+  .page-section { margin-bottom: 22px; }
+  .page-head { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: #334155; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 12px; font-weight: 700; break-after: avoid; }
+  .orig-img { text-align: center; margin-bottom: 12px; }
+  .orig-img img { max-width: 100%; max-height: 420px; border: 1px solid #e2e8f0; border-radius: 8px; }
+  .block { margin-bottom: 10px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; break-inside: avoid; page-break-inside: avoid; background: rgba(255,255,255,0.65); }
+  .en { font-family: 'Inter', sans-serif; font-size: ${state.enSize}px; direction: ltr; text-align: left; color: #0f172a; line-height: 1.58; margin-bottom: 4px; overflow-wrap: anywhere; }
+  .ar { font-family: ${state.arFont}; font-size: ${state.arSize}px; direction: rtl; text-align: right; color: ${state.arColor}; line-height: 1.72; overflow-wrap: anywhere; }
   .heading { font-weight: 800; font-size: 1.12em; }
+  .print-btn { position: fixed; bottom: 16px; left: 16px; z-index: 10; background: #059669; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-family: 'Cairo', sans-serif; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  @media print { .print-btn { display: none; } body { padding: 0; } }
 </style>
 </head>
 <body>
   <div class="wm"></div>
+  <button class="print-btn" onclick="window.print()">حفظ كـ PDF</button>
   <div class="wrap">${pagesHtml}</div>
 </body>
 </html>`;
@@ -1591,15 +1889,14 @@ ${JSON.stringify(lines)}`;
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${lecture.fileName.replace(/\.pdf$/i, '')}_translated.html`;
+        a.download = `${lecture.fileName.replace(/\.pdf$/i, '')}_مترجمة.html`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-        showToast('تم حفظ نسخة الملزمة المنسقة بالعلامة المائية!', 'success');
+        showToast('تم حفظ النسخة المترجمة المرتبة بالعلامة المائية!', 'success');
       }
 
-      // Refresh History Modal UI
       async function refreshHistoryUI() {
         const items = await getAllHistory();
         dom.historyCountBadge.textContent = String(items.length);
@@ -1624,12 +1921,12 @@ ${JSON.stringify(lines)}`;
             hour: '2-digit',
             minute: '2-digit'
           });
-          const engineLabel = item.engine === 'gemini' ? 'Gemini AI' : 'ترجمة مجانية';
+          const engineLabel = item.engine === 'gemini' ? 'Gemini AI' : 'ترجمة سريعة';
 
           card.innerHTML = `
             <div class="min-w-0 flex-1">
-              <p class="font-bold text-sm truncate">${escapeHtml(item.fileName)}</p>
-              <p class="text-xs opacity-75 mt-0.5">صفحات: ${escapeHtml(item.pageRange || String(item.pages?.length || 0))} • ${engineLabel} • ${dateStr}</p>
+              <p class="font-bold text-xs sm:text-sm truncate">${escapeHtml(item.fileName)}</p>
+              <p class="text-[11px] sm:text-xs opacity-75 mt-0.5">صفحات: ${escapeHtml(item.pageRange || String(item.pages?.length || 0))} • ${engineLabel} • ${dateStr}</p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <button type="button" class="open-hist-btn px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold">فتح</button>
@@ -1653,7 +1950,6 @@ ${JSON.stringify(lines)}`;
         });
       }
 
-      // Modal Helpers
       function openModal(id) {
         const el = document.getElementById(id);
         if (el) el.classList.remove('hidden');
@@ -1684,8 +1980,7 @@ ${JSON.stringify(lines)}`;
       });
 
       dom.toggleKeyVisibilityBtn.addEventListener('click', () => {
-        const isPass = dom.geminiApiKeyInput.type === 'password';
-        dom.geminiApiKeyInput.type = isPass ? 'text' : 'password';
+        dom.geminiApiKeyInput.type = dom.geminiApiKeyInput.type === 'password' ? 'text' : 'password';
       });
 
       dom.testApiKeyBtn.addEventListener('click', async () => {
@@ -1699,6 +1994,8 @@ ${JSON.stringify(lines)}`;
           const res = await translateBatchGemini(['Hello university student'], state.apiKey, 'clear');
           if (res && res[0]) {
             showToast('المفتاح شغال وممتاز! جاهز للترجمة الأكاديمية.', 'success');
+          } else {
+            showToast('المفتاح لم يرجع نتيجة، تأكد من صحته.', 'error');
           }
         } catch (err) {
           showToast('المفتاح غير صالح أو تعذّر الاتصال بـ Google Gemini.', 'error');
@@ -1714,7 +2011,6 @@ ${JSON.stringify(lines)}`;
         safeSet('aymen_trans_style', state.style);
       });
 
-      // File Upload Events
       dom.chooseFileBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         dom.pdfFileInput.click();
@@ -1728,15 +2024,11 @@ ${JSON.stringify(lines)}`;
         e.preventDefault();
         dom.dropzone.classList.add('dropzone-active');
       });
-      dom.dropzone.addEventListener('dragleave', () => {
-        dom.dropzone.classList.remove('dropzone-active');
-      });
+      dom.dropzone.addEventListener('dragleave', () => dom.dropzone.classList.remove('dropzone-active'));
       dom.dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dom.dropzone.classList.remove('dropzone-active');
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-          handlePdfFile(e.dataTransfer.files[0]);
-        }
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) handlePdfFile(e.dataTransfer.files[0]);
       });
 
       dom.clearFileBtn.addEventListener('click', () => {
@@ -1753,7 +2045,6 @@ ${JSON.stringify(lines)}`;
         loadSampleLecture();
       });
 
-      // Translation Controls
       dom.startTranslateBtn.addEventListener('click', startTranslation);
       dom.pauseResumeBtn.addEventListener('click', () => {
         state.isPaused = !state.isPaused;
@@ -1762,8 +2053,8 @@ ${JSON.stringify(lines)}`;
       dom.cancelTranslateBtn.addEventListener('click', () => {
         state.cancelRequested = true;
       });
+      dom.retryFailedAllBtn.addEventListener('click', retryFailedBlocks);
 
-      // Reader Controls
       document.querySelectorAll('.view-mode-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           state.viewMode = btn.getAttribute('data-view-mode');
@@ -1781,6 +2072,11 @@ ${JSON.stringify(lines)}`;
         renderCurrentLecture();
       });
 
+      dom.toggleStylePanelBtn.addEventListener('click', () => {
+        dom.styleControlsRow.classList.toggle('hidden');
+        dom.styleControlsRow.classList.toggle('flex');
+      });
+
       dom.revealAllBtn.addEventListener('click', () => {
         document.querySelectorAll('.ar-line').forEach((el) => el.classList.add('revealed'));
       });
@@ -1788,7 +2084,6 @@ ${JSON.stringify(lines)}`;
         document.querySelectorAll('.ar-line').forEach((el) => el.classList.remove('revealed'));
       });
 
-      // Typography & Colors
       dom.arFontSelect.addEventListener('change', (e) => {
         state.arFont = e.target.value;
         safeSet('aymen_ar_font', state.arFont);
@@ -1815,15 +2110,19 @@ ${JSON.stringify(lines)}`;
         });
       });
 
-      // Export Controls
-      dom.exportPdfBtn.addEventListener('click', () => openModal('printGuideModal'));
+      dom.exportPdfBtn.addEventListener('click', () => {
+        if (state.isTranslating) {
+          showToast('انتظر اكتمال الترجمة أولاً قبل تنزيل الـ PDF.', 'warning');
+          return;
+        }
+        openModal('printGuideModal');
+      });
       dom.confirmPrintNowBtn.addEventListener('click', () => {
         closeModal('printGuideModal');
         setTimeout(() => window.print(), 200);
       });
       dom.exportHtmlBtn.addEventListener('click', exportStandaloneHtml);
 
-      // Modals (About, History, Close buttons)
       dom.openAboutBtn.addEventListener('click', () => openModal('aboutModal'));
       dom.openApiGuideBtn.addEventListener('click', () => openModal('aboutModal'));
       dom.openHistoryBtn.addEventListener('click', async () => {
