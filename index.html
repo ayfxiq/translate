@@ -3,51 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>مترجم الملازم الجامعية PDF — إعداد أيمن رعد</title>
+  <title>مترجم الملازم الجامعية PDF</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Readex+Pro:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
-      --bg-app: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-subtle: #f1f5f9;
+      --bg-app: #f4f7fb;
+      --bg-surface: rgba(255, 255, 255, 0.9);
+      --bg-surface-solid: #ffffff;
+      --bg-subtle: #eef2f8;
       --text-main: #0f172a;
       --text-muted: #475569;
-      --border-color: #e2e8f0;
+      --border-color: rgba(148, 163, 184, 0.28);
       --accent: #2563eb;
-      --accent-soft: #eff6ff;
-      --ar-font: 'Cairo', sans-serif;
-      --en-font: 'Inter', sans-serif;
+      --accent-2: #4f46e5;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --ar-font: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+      --en-font: 'Plus Jakarta Sans', 'Inter', sans-serif;
       --en-size: 16px;
       --ar-size: 16px;
       --ar-color: #1d4ed8;
-      --line-gap: 1.72;
+      --line-gap: 1.75;
     }
 
     html[data-theme="dark"] {
-      --bg-app: #0b1120;
-      --bg-surface: #111827;
-      --bg-subtle: #1e293b;
+      --bg-app: #070b14;
+      --bg-surface: rgba(15, 23, 42, 0.86);
+      --bg-surface-solid: #0f172a;
+      --bg-subtle: rgba(30, 41, 59, 0.72);
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      --border-color: #1f2937;
+      --border-color: rgba(148, 163, 184, 0.16);
       --accent: #3b82f6;
-      --accent-soft: #172554;
+      --accent-2: #6366f1;
+      --accent-soft: rgba(59, 130, 246, 0.16);
     }
 
     html[data-theme="sepia"] {
-      --bg-app: #f5efe4;
-      --bg-surface: #fbf7ef;
-      --bg-subtle: #efe6d5;
-      --text-main: #2d2418;
-      --text-muted: #6b5b47;
-      --border-color: #e2d5be;
+      --bg-app: #f4ede1;
+      --bg-surface: rgba(252, 248, 240, 0.92);
+      --bg-surface-solid: #fcf8f0;
+      --bg-subtle: #ece2d0;
+      --text-main: #2c2216;
+      --text-muted: #6c5b46;
+      --border-color: rgba(160, 134, 98, 0.28);
       --accent: #b45309;
-      --accent-soft: #fef3c7;
+      --accent-2: #92400e;
+      --accent-soft: rgba(180, 83, 9, 0.12);
     }
 
     * { box-sizing: border-box; }
@@ -58,16 +64,33 @@
     }
 
     body {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
       background-color: var(--bg-app);
       color: var(--text-main);
       margin: 0;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      background-image:
+        radial-gradient(at 88% 8%, rgba(37, 99, 235, 0.09) 0px, transparent 48%),
+        radial-gradient(at 12% 24%, rgba(99, 102, 241, 0.08) 0px, transparent 45%),
+        radial-gradient(at 50% 96%, rgba(14, 165, 233, 0.06) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    html[data-theme="dark"] body {
+      background-image:
+        radial-gradient(at 88% 8%, rgba(37, 99, 235, 0.16) 0px, transparent 48%),
+        radial-gradient(at 12% 24%, rgba(99, 102, 241, 0.14) 0px, transparent 45%);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Readex Pro', 'Cairo', sans-serif;
     }
 
     .surface-card {
       background-color: var(--bg-surface);
       border: 1px solid var(--border-color);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .subtle-box {
@@ -75,10 +98,46 @@
       border: 1px solid var(--border-color);
     }
 
+    .gradient-btn {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    }
+
+    .gradient-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    /* Slow random-drifting unclickable credit badge */
+    .floating-credit {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 45;
+      pointer-events: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-user-drag: none !important;
+      touch-action: none !important;
+      will-change: transform;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: 'Readex Pro', 'Cairo', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--accent);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0.82;
+      white-space: nowrap;
+    }
+
     .en-line {
       font-family: var(--en-font);
       font-size: var(--en-size);
-      line-height: 1.6;
+      line-height: 1.62;
       direction: ltr;
       text-align: left;
       unicode-bidi: isolate;
@@ -105,7 +164,7 @@
 
     .study-hidden .ar-line:not(.revealed) {
       filter: blur(7px);
-      opacity: 0.26;
+      opacity: 0.24;
       user-select: none;
       cursor: pointer;
     }
@@ -115,13 +174,13 @@
     }
 
     .study-hidden .bilingual-block:hover .ar-line:not(.revealed) {
-      opacity: 0.45;
+      opacity: 0.44;
     }
 
     .bilingual-page {
       position: relative;
       overflow: hidden;
-      background-color: var(--bg-surface);
+      background-color: var(--bg-surface-solid);
       border: 1px solid var(--border-color);
     }
 
@@ -131,13 +190,13 @@
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      opacity: 0.085;
+      opacity: 0.08;
       background-repeat: repeat;
       background-size: 240px 175px;
     }
 
     html[data-theme="dark"] .watermark-layer {
-      opacity: 0.065;
+      opacity: 0.06;
     }
 
     .page-content-layer {
@@ -158,7 +217,16 @@
       padding: 4px 8px;
     }
 
-    /* Print / Save as PDF styles: natural multi-page flow + fixed diagonal watermark on EVERY page */
+    @keyframes subtleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .hero-svg-float {
+      animation: subtleFloat 4.5s ease-in-out infinite;
+    }
+
+    /* Print / Save as PDF: clean multi-page flow + silent diagonal tiled watermark */
     .print-watermark-fixed {
       display: none;
     }
@@ -171,6 +239,7 @@
 
       html, body {
         background: #ffffff !important;
+        background-image: none !important;
         color: #0f172a !important;
         overflow: visible !important;
         height: auto !important;
@@ -178,7 +247,8 @@
         print-color-adjust: exact !important;
       }
 
-      .no-print {
+      .no-print,
+      .floating-credit {
         display: none !important;
       }
 
@@ -196,7 +266,7 @@
         height: 100vh !important;
         z-index: 0 !important;
         pointer-events: none !important;
-        opacity: 0.095 !important;
+        opacity: 0.09 !important;
         background-repeat: repeat !important;
         background-size: 240px 170px !important;
       }
@@ -254,39 +324,51 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- Fixed Print Watermark Layer (appears on every exported PDF page) -->
+  <!-- Silent Print Watermark Layer (embedded across all exported PDF pages) -->
   <div id="printWatermarkFixed" class="print-watermark-fixed" aria-hidden="true"></div>
 
-  <!-- Fixed Responsive Top Header -->
-  <header class="no-print sticky top-0 z-30 surface-card border-x-0 border-t-0 backdrop-blur-md bg-opacity-95">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-          <i data-lucide="book-open-text" class="w-5 h-5"></i>
+  <!-- Slowly Drifting, Unclickable Credit Element -->
+  <div id="floatingCredit" class="floating-credit no-print" aria-hidden="true">
+    <span class="inline-flex items-center gap-1.5">
+      <span class="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block"></span>
+      <span>إعداد أيمن رعد</span>
+    </span>
+  </div>
+
+  <!-- Top Header -->
+  <header class="no-print sticky top-0 z-30 surface-card border-x-0 border-t-0">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Custom Brand SVG -->
+        <div class="w-10 h-10 rounded-2xl gradient-btn text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/20">
+          <svg viewBox="0 0 28 28" class="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="4" y="4" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.8" stroke-opacity="0.35"/>
+            <path d="M8.5 10.5H19.5M8.5 14.5H15.5M8.5 18.5H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="19.5" cy="18" r="2.8" fill="currentColor"/>
+          </svg>
         </div>
         <div class="min-w-0">
-          <h1 class="text-sm sm:text-lg font-extrabold truncate leading-tight">مترجم الملازم الجامعية</h1>
-          <p class="text-[11px] sm:text-xs opacity-75 truncate">ترجمة PDF سطر بسطر بدقة عالية</p>
+          <h1 class="text-sm sm:text-lg font-bold truncate leading-tight">مترجم الملازم الجامعية</h1>
+          <p class="text-[11px] sm:text-xs opacity-70 truncate">منصة ترجمة PDF الأكاديمية سطر بسطر</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
-        <!-- Fixed Credit Badge -->
-        <div class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold bg-blue-600/10 text-blue-700 dark:text-blue-300 border border-blue-600/20 select-none" title="حقوق الإعداد">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
-          <span>إعداد أيمن رعد</span>
-        </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <span id="serverModeBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span>اتصال آمن</span>
+        </span>
 
         <!-- Theme Switcher -->
-        <div class="flex items-center subtle-box rounded-xl p-0.5 sm:p-1 gap-0.5" role="group" aria-label="تغيير المظهر">
+        <div class="flex items-center subtle-box rounded-xl p-1 gap-0.5" role="group" aria-label="تغيير المظهر">
           <button type="button" data-theme-btn="light" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع النهاري">
-            <i data-lucide="sun" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <i data-lucide="sun" class="w-4 h-4"></i>
           </button>
           <button type="button" data-theme-btn="sepia" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع الورقي">
-            <i data-lucide="book-open" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <i data-lucide="book-open" class="w-4 h-4"></i>
           </button>
           <button type="button" data-theme-btn="dark" class="theme-btn p-1.5 rounded-lg text-xs transition" title="الوضع الليلي">
-            <i data-lucide="moon" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <i data-lucide="moon" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
@@ -300,25 +382,30 @@
     <div class="no-print grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-5 sm:mb-6">
 
       <!-- Upload & Page Range Card -->
-      <section class="lg:col-span-7 surface-card rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col gap-4">
+      <section class="lg:col-span-7 surface-card rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col gap-4">
         <div class="flex items-center justify-between gap-2 flex-wrap">
-          <div class="flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm">1</span>
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-xl gradient-btn text-white flex items-center justify-center font-bold text-xs shadow-sm">1</span>
             <h2 class="font-bold text-sm sm:text-base">رفع ملزمة PDF</h2>
           </div>
           <span class="text-[11px] sm:text-xs px-2.5 py-1 rounded-full subtle-box font-semibold">ملفات PDF فقط (.pdf)</span>
         </div>
 
-        <!-- Dropzone -->
+        <!-- Dropzone with Custom Vector Graphic -->
         <div id="dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-5 sm:p-6 text-center transition-all cursor-pointer subtle-box hover:border-blue-500">
           <input id="pdfFileInput" type="file" accept=".pdf,application/pdf" class="hidden" />
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-2.5 flex items-center justify-center">
-            <i data-lucide="file-up" class="w-6 h-6"></i>
+          <div class="hero-svg-float mb-3">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="10" y="6" width="36" height="48" rx="8" fill="#2563EB" fill-opacity="0.1" stroke="#2563EB" stroke-width="2"/>
+              <path d="M18 20H38M18 28H34M18 36H28" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="46" cy="44" r="12" fill="#2563EB"/>
+              <path d="M46 49V39M46 39L42 43M46 39L50 43" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
           <p class="font-bold text-sm sm:text-base mb-1">اسحب ملف الـ PDF هنا أو اضغط للاختيار</p>
-          <p class="text-xs opacity-70 mb-3.5 max-w-md">تتم قراءة الملف محلياً بمتصفحك مع الحفاظ على الرموز والمعادلات وترتيب الفقرات</p>
+          <p class="text-xs opacity-70 mb-4 max-w-md">قراءة منظمة للفقرات والعناوين مع حماية المعادلات والرموز العلمية</p>
           <div class="flex items-center justify-center gap-2 flex-wrap w-full">
-            <button type="button" id="chooseFileBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold transition shadow-sm">
+            <button type="button" id="chooseFileBtn" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl gradient-btn text-white text-xs sm:text-sm font-bold transition shadow-md shadow-blue-600/20">
               اختيار ملف PDF
             </button>
             <button type="button" id="loadSampleBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl surface-card hover:border-blue-500 text-xs sm:text-sm font-bold transition">
@@ -328,10 +415,12 @@
         </div>
 
         <!-- Loaded File Info + Page Range Selector -->
-        <div id="fileMetaPanel" class="hidden subtle-box rounded-xl p-3.5 sm:p-4 space-y-3">
+        <div id="fileMetaPanel" class="hidden subtle-box rounded-2xl p-3.5 sm:p-4 space-y-3">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-2.5 min-w-0">
-              <i data-lucide="file-text" class="w-5 h-5 text-red-500 shrink-0"></i>
+              <div class="w-9 h-9 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center shrink-0">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
               <div class="min-w-0">
                 <p id="loadedFileName" class="font-bold text-xs sm:text-sm truncate">lecture.pdf</p>
                 <p id="loadedFileStats" class="text-[11px] sm:text-xs opacity-75">0 صفحة</p>
@@ -343,11 +432,11 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
             <div>
               <label for="pageFromInput" class="block text-xs font-bold mb-1">من صفحة</label>
-              <input id="pageFromInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input id="pageFromInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-xl surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label for="pageToInput" class="block text-xs font-bold mb-1">إلى صفحة</label>
-              <input id="pageToInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-lg surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input id="pageToInput" type="number" min="1" value="1" class="w-full px-3 py-2 rounded-xl surface-card text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div class="col-span-2 sm:col-span-1 flex items-end">
               <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer py-1.5">
@@ -360,50 +449,50 @@
       </section>
 
       <!-- Translation Engine & Action Card -->
-      <section class="lg:col-span-5 surface-card rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-4">
+      <section class="lg:col-span-5 surface-card rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-4">
         <div class="space-y-3.5">
           <div class="flex items-center justify-between gap-2 flex-wrap">
-            <div class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-blue-600/10 text-blue-600 flex items-center justify-center font-bold text-sm">2</span>
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-xl gradient-btn text-white flex items-center justify-center font-bold text-xs shadow-sm">2</span>
               <h2 class="font-bold text-sm sm:text-base">محرك الترجمة</h2>
             </div>
             <button type="button" id="openApiGuideBtn" class="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
               <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-              <span>شلون أجيب المفتاح؟</span>
+              <span>دليل الربط</span>
             </button>
           </div>
 
           <!-- Engine Selector -->
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" data-engine="gemini" class="engine-tab p-2.5 sm:p-3 rounded-xl border text-right transition">
+            <button type="button" data-engine="gemini" class="engine-tab p-2.5 sm:p-3 rounded-2xl border text-right transition">
               <div class="flex items-center justify-between gap-1 mb-1">
                 <span class="font-bold text-xs sm:text-sm">Gemini AI</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold shrink-0">الأدق</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold shrink-0">الأدق</span>
               </div>
-              <p class="text-[11px] opacity-75 leading-snug">ترجمة أكاديمية احترافية</p>
+              <p class="text-[11px] opacity-75 leading-snug">دقة أكاديمية عالية جداً</p>
             </button>
 
-            <button type="button" data-engine="free" class="engine-tab p-2.5 sm:p-3 rounded-xl border text-right transition">
+            <button type="button" data-engine="free" class="engine-tab p-2.5 sm:p-3 rounded-2xl border text-right transition">
               <div class="flex items-center justify-between gap-1 mb-1">
                 <span class="font-bold text-xs sm:text-sm">ترجمة سريعة</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 dark:text-blue-300 font-bold shrink-0">مجانية</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/15 text-blue-700 dark:text-blue-300 font-bold shrink-0">مباشرة</span>
               </div>
-              <p class="text-[11px] opacity-75 leading-snug">مباشرة بدون مفتاح API</p>
+              <p class="text-[11px] opacity-75 leading-snug">فورية بدون مفتاح</p>
             </button>
           </div>
 
           <!-- Gemini API Key Box -->
-          <div id="geminiConfigBox" class="subtle-box rounded-xl p-3 space-y-2">
+          <div id="geminiConfigBox" class="subtle-box rounded-2xl p-3 space-y-2">
             <div class="flex items-center justify-between gap-2">
-              <label for="geminiApiKeyInput" class="text-xs font-bold">مفتاح Google Gemini API (مجاني)</label>
-              <span id="keyStatusBadge" class="text-[11px] font-semibold opacity-75">غير مربوط</span>
+              <label for="geminiApiKeyInput" class="text-xs font-bold">مفتاح Gemini API (أو تلقائي عبر الخادم)</label>
+              <span id="keyStatusBadge" class="text-[11px] font-semibold opacity-75">اختياري</span>
             </div>
             <div class="flex gap-1.5">
-              <input id="geminiApiKeyInput" type="password" dir="ltr" placeholder="AIzaSy..." class="flex-1 min-w-0 px-3 py-2 rounded-lg surface-card text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <button type="button" id="toggleKeyVisibilityBtn" class="px-2.5 rounded-lg surface-card hover:border-blue-500 shrink-0" title="إظهار/إخفاء المفتاح">
+              <input id="geminiApiKeyInput" type="password" dir="ltr" placeholder="AIzaSy..." class="flex-1 min-w-0 px-3 py-2 rounded-xl surface-card text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <button type="button" id="toggleKeyVisibilityBtn" class="px-2.5 rounded-xl surface-card hover:border-blue-500 shrink-0" title="إظهار/إخفاء المفتاح">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
-              <button type="button" id="testApiKeyBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 text-white text-xs font-bold shrink-0">
+              <button type="button" id="testApiKeyBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 text-white text-xs font-bold shrink-0">
                 فحص
               </button>
             </div>
@@ -412,7 +501,7 @@
           <!-- Translation Style -->
           <div class="space-y-1">
             <label for="translationStyleSelect" class="block text-xs font-bold">أسلوب الترجمة:</label>
-            <select id="translationStyleSelect" class="w-full px-3 py-2 rounded-xl surface-card font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select id="translationStyleSelect" class="w-full px-3 py-2.5 rounded-xl surface-card font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="academic">أكاديمي دقيق (يحافظ على المصطلح الإنجليزي المهم بين قوسين)</option>
               <option value="clear">واضح ومبسّط للفهم السريع</option>
             </select>
@@ -422,7 +511,7 @@
         <!-- Primary Action + Progress -->
         <div class="space-y-2.5 pt-1">
           <div class="flex gap-2 flex-wrap sm:flex-nowrap">
-            <button type="button" id="startTranslateBtn" disabled class="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-45 disabled:cursor-not-allowed text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-sm transition">
+            <button type="button" id="startTranslateBtn" disabled class="flex-1 py-3 px-4 rounded-xl gradient-btn disabled:opacity-45 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 transition">
               <i data-lucide="languages" class="w-4 h-4"></i>
               <span id="startTranslateBtnText">ابدأ ترجمة الملزمة</span>
             </button>
@@ -441,15 +530,15 @@
               <span id="progressPercent" class="shrink-0 font-mono">0%</span>
             </div>
             <div class="w-full h-2.5 rounded-full subtle-box overflow-hidden">
-              <div id="progressBar" class="h-full bg-blue-600 transition-all duration-300 rounded-full" style="width: 0%"></div>
+              <div id="progressBar" class="h-full gradient-btn transition-all duration-300 rounded-full" style="width: 0%"></div>
             </div>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- Reader Toolbar (shown when document is ready) -->
-    <section id="readerToolbar" class="no-print hidden surface-card rounded-2xl p-3.5 sm:p-4 mb-5 shadow-sm space-y-3">
+    <!-- Reader Toolbar -->
+    <section id="readerToolbar" class="no-print hidden surface-card rounded-3xl p-3.5 sm:p-4 mb-5 shadow-sm space-y-3">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <!-- View Modes -->
         <div class="flex items-center gap-1.5 flex-wrap">
@@ -473,7 +562,7 @@
           </button>
         </div>
 
-        <!-- Export Buttons -->
+        <!-- Export Buttons (no mention of watermark) -->
         <div class="flex items-center gap-2 flex-wrap">
           <button type="button" id="retryFailedAllBtn" class="hidden px-3 py-2 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
@@ -481,22 +570,23 @@
           </button>
           <button type="button" id="exportPdfBtn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
             <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>تنزيل PDF بالعلامة المائية</span>
+            <span>تنزيل كملف PDF</span>
           </button>
-          <button type="button" id="exportHtmlBtn" class="px-3 py-2.5 rounded-xl surface-card hover:border-blue-500 text-xs font-bold flex items-center justify-center gap-1.5 transition" title="حفظ نسخة HTML مستقلة تعمل بدون إنترنت">
+          <button type="button" id="exportHtmlBtn" class="px-3 py-2.5 rounded-xl surface-card hover:border-blue-500 text-xs font-bold flex items-center justify-center gap-1.5 transition" title="حفظ نسخة قابلة للفتح بدون إنترنت">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
             <span>حفظ نسخة</span>
           </button>
         </div>
       </div>
 
-      <!-- Typography & Color Settings Row (collapsible on small mobile) -->
+      <!-- Typography & Color Settings Row -->
       <div id="styleControlsRow" class="hidden sm:flex pt-3 border-t border-slate-200/70 dark:border-slate-700/70 flex-wrap items-center gap-3 sm:gap-4 text-xs">
         <div class="flex items-center gap-2">
           <label for="arFontSelect" class="font-bold opacity-80">الخط:</label>
-          <select id="arFontSelect" class="px-2.5 py-1.5 rounded-lg surface-card font-semibold">
-            <option value="'Cairo', sans-serif">Cairo (كايرو)</option>
+          <select id="arFontSelect" class="px-2.5 py-1.5 rounded-xl surface-card font-semibold">
             <option value="'IBM Plex Sans Arabic', sans-serif">IBM Plex Arabic</option>
+            <option value="'Cairo', sans-serif">Cairo (كايرو)</option>
+            <option value="'Readex Pro', sans-serif">Readex Pro</option>
             <option value="'Tajawal', sans-serif">Tajawal (تجوال)</option>
             <option value="'Noto Naskh Arabic', serif">Noto Naskh (نسخ)</option>
           </select>
@@ -525,7 +615,7 @@
       </div>
 
       <!-- Study Mode Helper Banner -->
-      <div id="studyModeBanner" class="hidden subtle-box rounded-xl px-3.5 py-2 flex items-center justify-between gap-2 flex-wrap text-xs">
+      <div id="studyModeBanner" class="hidden subtle-box rounded-2xl px-3.5 py-2 flex items-center justify-between gap-2 flex-wrap text-xs">
         <div class="flex items-center gap-2">
           <i data-lucide="eye-off" class="w-4 h-4 text-amber-600 shrink-0"></i>
           <span class="font-semibold">وضع المراجعة مفعل: اضغط على أي سطر إنكليزي لإظهار أو إخفاء ترجمته.</span>
@@ -539,27 +629,31 @@
 
     <!-- Document Output Area -->
     <section id="documentStage" class="space-y-5">
-      <!-- Empty State -->
-      <div id="emptyState" class="no-print surface-card rounded-2xl p-6 sm:p-10 text-center max-w-2xl mx-auto">
-        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-600/10 text-blue-600 mx-auto mb-4 flex items-center justify-center">
-          <i data-lucide="file-check-2" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+      <!-- Empty State with Custom Academic Vector Graphic -->
+      <div id="emptyState" class="no-print surface-card rounded-3xl p-6 sm:p-10 text-center max-w-2xl mx-auto shadow-sm">
+        <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center rounded-3xl bg-blue-600/8">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="8" y="8" width="26" height="34" rx="6" fill="#2563EB" fill-opacity="0.14" stroke="#2563EB" stroke-width="2"/>
+            <rect x="22" y="14" width="26" height="34" rx="6" fill="#FFFFFF" stroke="#4F46E5" stroke-width="2"/>
+            <path d="M28 24H42M28 31H40M28 38H36" stroke="#4F46E5" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
         </div>
-        <h3 class="text-base sm:text-lg font-extrabold mb-2">جاهز لترجمة ملزمتك الجامعية</h3>
+        <h3 class="text-base sm:text-lg font-bold mb-2">ترجمة منظّمة لملازمك الجامعية</h3>
         <p class="text-xs sm:text-sm opacity-75 leading-relaxed mb-5">
-          ارفع أي ملف PDF إنجليزي بالأعلى وسنترجمه بسرعة ودقة سطر بسطر مع إمكانية التعديل اليدوي ووضع المراجعة وتنزيله كـ PDF منسّق بعلامة مائية شفافة «إعداد أيمن رعد».
+          ارفع أي محاضرة بصيغة PDF بالأعلى للحصول على نسخة ثنائية اللغة (سطر إنكليزي وتحته ترجمته العربية) مع إمكانية التعديل اليدوي ووضع المراجعة السريع وتنزيلها كملف PDF مرتب للطباعة.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-right">
-          <div class="subtle-box rounded-xl p-3">
-            <p class="font-bold mb-1">سطر إنكليزي + سطر عربي</p>
-            <p class="opacity-75">تدفق مرتب عبر الصفحات بدون تداخل أو قصّ للنصوص.</p>
+          <div class="subtle-box rounded-2xl p-3.5">
+            <p class="font-bold mb-1">تنسيق سطر بسطر</p>
+            <p class="opacity-75">تدفق طبيعي ومريح للعين عبر الصفحات بدون تداخل أو قصّ.</p>
           </div>
-          <div class="subtle-box rounded-xl p-3">
-            <p class="font-bold mb-1">تعديل مباشر قبل التحميل</p>
-            <p class="opacity-75">اضغط على أي جملة عربية لتعديلها وحفظها فوراً.</p>
+          <div class="subtle-box rounded-2xl p-3.5">
+            <p class="font-bold mb-1">تعديل مباشر وفوري</p>
+            <p class="opacity-75">اضغط على أي جملة مترجمة لتعديلها وحفظها قبل التنزيل.</p>
           </div>
-          <div class="subtle-box rounded-xl p-3">
-            <p class="font-bold mb-1">السجل المحلي للملازم</p>
-            <p class="opacity-75">كل ملزمة تترجمها تنحفظ في قسم «السجل» أسفل اليسار.</p>
+          <div class="subtle-box rounded-2xl p-3.5">
+            <p class="font-bold mb-1">حفظ تلقائي بالسجل</p>
+            <p class="opacity-75">ارجع لملازمك المترجمة سابقاً في أي وقت من قسم «السجل».</p>
           </div>
         </div>
       </div>
@@ -570,11 +664,11 @@
   </main>
 
   <!-- Fixed Bottom-Left Menu ("حول" & "السجل") -->
-  <nav class="no-print fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-40 flex items-center gap-1.5 surface-card p-1.5 rounded-2xl shadow-lg" aria-label="الأقسام السفلية">
+  <nav class="no-print fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-40 flex items-center gap-1.5 surface-card p-1.5 rounded-2xl shadow-xl" aria-label="الأقسام السفلية">
     <button type="button" id="openHistoryBtn" class="px-3 sm:px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
       <i data-lucide="history" class="w-4 h-4 text-blue-600"></i>
       <span>السجل</span>
-      <span id="historyCountBadge" class="text-[11px] px-1.5 py-0.5 rounded-full bg-blue-600 text-white font-bold">0</span>
+      <span id="historyCountBadge" class="text-[11px] px-1.5 py-0.5 rounded-full gradient-btn text-white font-bold">0</span>
     </button>
     <div class="w-px h-5 bg-slate-300 dark:bg-slate-700"></div>
     <button type="button" id="openAboutBtn" class="px-3 sm:px-3.5 py-2 rounded-xl hover:bg-blue-600/10 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
@@ -583,19 +677,13 @@
     </button>
   </nav>
 
-  <!-- Subtle Footer -->
-  <footer class="no-print border-t border-slate-200/70 dark:border-slate-800 py-4 px-4 text-center text-xs opacity-75">
-    <span>مترجم الملازم الجامعية PDF — </span>
-    <strong class="font-extrabold">إعداد أيمن رعد</strong>
-  </footer>
-
-  <!-- Modal: About & Step-by-Step Guide ("حول") -->
+  <!-- Modal: About & Step-by-Step Guide ("حول") — zero mention of watermark -->
   <div id="aboutModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="surface-card rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-          <h3 class="font-extrabold text-sm sm:text-base">حول الموقع ودليل الاستخدام الصحيح</h3>
+          <h3 class="font-bold text-sm sm:text-base">حول الموقع ودليل الاستخدام الصحيح</h3>
         </div>
         <button type="button" data-close-modal="aboutModal" class="p-1.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -603,44 +691,44 @@
       </div>
 
       <div class="p-4 sm:p-5 overflow-y-auto space-y-4 text-sm leading-relaxed">
-        <div class="subtle-box rounded-xl p-3.5 sm:p-4">
-          <p class="font-extrabold text-blue-600 mb-1">عن الموقع — إعداد أيمن رعد</p>
+        <div class="subtle-box rounded-2xl p-3.5 sm:p-4">
+          <p class="font-bold text-blue-600 mb-1">آلية عمل الموقع</p>
           <p class="text-xs sm:text-sm opacity-90">
-            أداة مجانية مخصصة لطلاب الجامعات لترجمة ملازم ومحاضرات الـ PDF الإنجليزية إلى العربية بصيغة <strong>سطر إنكليزي وتحته سطر عربي</strong>، مع الحفاظ على الرموز والمعادلات وإضافة علامة مائية شفافة «إعداد أيمن رعد» في خلفية كل صفحة عند التنزيل.
+            منصة مخصصة لطلاب الجامعات لتحويل الملازم والمحاضرات الإنجليزية بصيغة PDF إلى عرض ثنائي اللغة مرتب (سطر إنكليزي وتحته ترجمته العربية)، مع الحفاظ على المعادلات والرموز العلمية وإمكانية التعديل والمراجعة وحفظ نسخة جاهزة للطباعة.
           </p>
         </div>
 
         <div>
-          <h4 class="font-extrabold mb-2 flex items-center gap-2 text-sm">
+          <h4 class="font-bold mb-2 flex items-center gap-2 text-sm">
             <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
-            <span>آلية العمل والطريقة الصحيحة للاستخدام بدون أخطاء</span>
+            <span>الطريقة الصحيحة للاستخدام بدون أخطاء</span>
           </h4>
           <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm opacity-90">
-            <li><strong>ارفع ملف PDF نصي فقط:</strong> تأكد أن الملف بصيغة <code>.pdf</code> وأن النص فيه قابل للتحديد.</li>
-            <li><strong>حدد نطاق الصفحات للملازم الطويلة:</strong> للملازم التي تتجاوز 40 صفحة، ترجمة 15–25 صفحة بكل دفعة تعطي أسرع وأدق نتيجة.</li>
-            <li><strong>انتظر وصول شريط التقدم إلى 100%</strong> قبل الضغط على التنزيل حتى تنزل جميع السطور الإنجليزية وتحتها العربية مرتبة بالكامل.</li>
-            <li><strong>عند تنزيل ملف PDF:</strong> اضغط «تنزيل PDF بالعلامة المائية»، ومن نافذة الطباعة اختر <strong>Save as PDF</strong> وفعّل خيار <strong>Background graphics (رسومات الخلفية)</strong> حتى تظهر العلامة المائية «إعداد أيمن رعد» بكل صفحة.</li>
+            <li><strong>ارفع ملف PDF نصي فقط:</strong> تأكد أن الملف بصيغة <code>.pdf</code> وأن النصوص فيه قابلة للتحديد.</li>
+            <li><strong>حدد نطاق الصفحات للملازم الطويلة:</strong> إذا كانت الملزمة كبيرة، يُفضل ترجمة 15–25 صفحة في كل دفعة لضمان أسرع أداء.</li>
+            <li><strong>انتظر وصول شريط التقدم إلى 100%</strong> قبل التنزيل، ويمكنك تعديل أي سطر عربي مباشرة بالنقر عليه.</li>
+            <li><strong>لتنزيل الملف كـ PDF:</strong> اضغط «تنزيل كملف PDF»، واختر <strong>Save as PDF</strong> مع تفعيل خيار <strong>Background graphics</strong> للحصول على أفضل تنسيق للطباعة.</li>
           </ol>
         </div>
 
-        <div class="subtle-box rounded-xl p-3.5 sm:p-4 space-y-2.5 border-blue-500/30">
-          <h4 class="font-extrabold text-blue-700 dark:text-blue-400 flex items-center gap-2 text-sm">
+        <div class="subtle-box rounded-2xl p-3.5 sm:p-4 space-y-2.5 border-blue-500/30">
+          <h4 class="font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2 text-sm">
             <i data-lucide="key-round" class="w-4 h-4"></i>
-            <span>شلون تجيب مفتاح Google Gemini المجاني للترجمة الأكاديمية الدقيقة؟</span>
+            <span>طريقة ربط مفتاح Google Gemini المجاني للترجمة الأكاديمية</span>
           </h4>
           <ol class="list-decimal list-inside space-y-1.5 text-xs sm:text-sm opacity-90">
-            <li>افتح موقع <strong>Google AI Studio</strong>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-bold" dir="ltr">aistudio.google.com/apikey</a> وسجّل دخول بحساب Google.</li>
-            <li>اضغط <strong>Create API key</strong> — مجاني تماماً بدون بطاقة بنكية.</li>
-            <li>انسخ المفتاح (يبدأ بـ <code>AIzaSy...</code>) والصقه في خانة <strong>Gemini AI</strong> بالموقع ثم اضغط <strong>فحص</strong>.</li>
+            <li>افتح موقع <strong>Google AI Studio</strong>: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-bold" dir="ltr">aistudio.google.com/apikey</a> وسجّل الدخول بحسابك في Google.</li>
+            <li>اضغط <strong>Create API key</strong> — الخدمة مجانية بدون بطاقة بنكية.</li>
+            <li>انسخ المفتاح الذي يبدأ بـ <code>AIzaSy...</code> والصقه في خانة <strong>Gemini AI</strong> بالموقع ثم اضغط <strong>فحص</strong>.</li>
           </ol>
           <p class="text-[11px] opacity-75">
-            مفتاحك يُحفظ بمتصفحك فقط ولا يطلع عليه أحد غيرك.
+            يتم حفظ المفتاح داخل متصفحك فقط ولا يطلع عليه أي طرف آخر.
           </p>
         </div>
       </div>
 
       <div class="px-4 sm:px-5 py-3 border-t border-slate-200/70 dark:border-slate-700 flex justify-end">
-        <button type="button" data-close-modal="aboutModal" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700">
+        <button type="button" data-close-modal="aboutModal" class="px-4 py-2 rounded-xl gradient-btn text-white text-xs font-bold">
           فهمت، إغلاق
         </button>
       </div>
@@ -649,11 +737,11 @@
 
   <!-- Modal: History ("السجل") -->
   <div id="historyModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="surface-card rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200/70 dark:border-slate-700 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
-          <h3 class="font-extrabold text-sm sm:text-base">سجل الملازم المترجمة سابقاً</h3>
+          <h3 class="font-bold text-sm sm:text-base">سجل الملازم المترجمة سابقاً</h3>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" id="clearAllHistoryBtn" class="text-xs font-bold text-red-600 hover:underline px-2 py-1">مسح السجل</button>
@@ -667,27 +755,27 @@
     </div>
   </div>
 
-  <!-- Print Helper Modal -->
+  <!-- Print Helper Modal (zero mention of watermark) -->
   <div id="printGuideModal" class="no-print hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-    <div class="surface-card rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">
+    <div class="surface-card rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-4">
       <div class="flex items-center gap-2.5">
         <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
           <i data-lucide="printer" class="w-5 h-5"></i>
         </div>
         <div>
-          <h3 class="font-extrabold text-base">تنزيل الملزمة كـ PDF بالعلامة المائية</h3>
-          <p class="text-xs opacity-75">لظهور «إعداد أيمن رعد» بكل الصفحات بشكل مرتب:</p>
+          <h3 class="font-bold text-base">تنزيل الملزمة كملف PDF</h3>
+          <p class="text-xs opacity-75">للحصول على أفضل جودة طباعة وتنسيق:</p>
         </div>
       </div>
-      <ol class="list-decimal list-inside space-y-1.5 text-xs sm:text-sm opacity-90 subtle-box rounded-xl p-3.5">
+      <ol class="list-decimal list-inside space-y-1.5 text-xs sm:text-sm opacity-90 subtle-box rounded-2xl p-3.5">
         <li>اختر الوجهة: <strong>Save as PDF / حفظ بتنسيق PDF</strong>.</li>
         <li>فعّل خيار <strong>Background graphics / رسومات الخلفية</strong> من الإعدادات الإضافية.</li>
-        <li>اضغط <strong>Save / حفظ</strong> (كل سطر إنكليزي سيبقى مع ترجمته العربية بدون انقسام).</li>
+        <li>اضغط <strong>Save / حفظ</strong> لتنزيل الملف مرتباً بالكامل.</li>
       </ol>
       <div class="flex items-center justify-end gap-2">
         <button type="button" data-close-modal="printGuideModal" class="px-4 py-2 rounded-xl surface-card text-xs font-bold">إلغاء</button>
         <button type="button" id="confirmPrintNowBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
-          فتح نافذة الحفظ كـ PDF
+          متابعة الحفظ كـ PDF
         </button>
       </div>
     </div>
@@ -705,12 +793,13 @@
           'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       }
 
-      const WATERMARK_TEXT = 'إعداد أيمن رعد';
+      // Silent tiled diagonal watermark for exported/printed PDF pages
+      const WM_LABEL = 'إعداد أيمن رعد';
       const watermarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="175" viewBox="0 0 240 175">
         <g transform="rotate(-32 120 88)">
           <text x="120" y="88" text-anchor="middle" dominant-baseline="middle"
             font-family="Cairo, Arial, sans-serif" font-size="20" font-weight="800" fill="#1e3a8a">
-            ${WATERMARK_TEXT}
+            ${WM_LABEL}
           </text>
         </g>
       </svg>`;
@@ -718,6 +807,45 @@
 
       const printWmEl = document.getElementById('printWatermarkFixed');
       if (printWmEl) printWmEl.style.backgroundImage = watermarkDataUri;
+
+      // Smooth, slow, random-drifting animation for the unclickable UI credit
+      (function initFloatingCredit() {
+        const el = document.getElementById('floatingCredit');
+        if (!el) return;
+        let x = Math.max(24, Math.random() * Math.max(120, window.innerWidth - 180));
+        let y = Math.max(84, Math.random() * Math.max(180, window.innerHeight - 160));
+        let angle = Math.random() * Math.PI * 2;
+        const speed = 0.32; // slow, calm movement
+        let targetTurn = 0;
+        let tick = 0;
+
+        function step() {
+          tick++;
+          if (tick % 140 === 0) {
+            targetTurn = (Math.random() - 0.5) * 0.025;
+          }
+          angle += targetTurn;
+
+          x += Math.cos(angle) * speed;
+          y += Math.sin(angle) * speed;
+
+          const padX = 16;
+          const padTop = 76;
+          const padBottom = 72;
+          const maxX = Math.max(padX + 10, window.innerWidth - el.offsetWidth - padX);
+          const maxY = Math.max(padTop + 10, window.innerHeight - el.offsetHeight - padBottom);
+
+          if (x < padX) { x = padX; angle = Math.PI - angle; }
+          if (x > maxX) { x = maxX; angle = Math.PI - angle; }
+          if (y < padTop) { y = padTop; angle = -angle; }
+          if (y > maxY) { y = maxY; angle = -angle; }
+
+          el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+          window.requestAnimationFrame(step);
+        }
+
+        window.requestAnimationFrame(step);
+      })();
 
       // Safe localStorage helpers
       function safeGet(key, fallback) {
@@ -823,16 +951,17 @@
       // App State
       const state = {
         theme: safeGet('aymen_theme', 'light'),
-        engine: safeGet('aymen_engine', 'free'), // Default free so it works immediately unless Gemini key is entered
+        engine: safeGet('aymen_engine', 'free'),
         apiKey: safeGet('aymen_gemini_key', ''),
         style: safeGet('aymen_trans_style', 'academic'),
-        arFont: safeGet('aymen_ar_font', "'Cairo', sans-serif"),
+        arFont: safeGet('aymen_ar_font', "'IBM Plex Sans Arabic', sans-serif"),
         enSize: parseInt(safeGet('aymen_en_size', '16'), 10) || 16,
         arSize: parseInt(safeGet('aymen_ar_size', '16'), 10) || 16,
         arColor: safeGet('aymen_ar_color', '#1d4ed8'),
         viewMode: 'interlinear',
         studyMode: false,
         showOriginalVisuals: false,
+        hasVercelBackend: false,
         pdfDoc: null,
         fileName: '',
         totalPages: 0,
@@ -842,13 +971,9 @@
         cancelRequested: false
       };
 
-      // If user already saved a Gemini API key, prefer Gemini automatically
-      if (state.apiKey && state.apiKey.length > 15 && !safeGet('aymen_engine', '')) {
-        state.engine = 'gemini';
-      }
-
       // DOM References
       const dom = {
+        serverModeBadge: document.getElementById('serverModeBadge'),
         dropzone: document.getElementById('dropzone'),
         pdfFileInput: document.getElementById('pdfFileInput'),
         chooseFileBtn: document.getElementById('chooseFileBtn'),
@@ -901,6 +1026,21 @@
         confirmPrintNowBtn: document.getElementById('confirmPrintNowBtn'),
         toastContainer: document.getElementById('toastContainer')
       };
+
+      // Detect if running on Vercel with /api/translate serverless backend
+      async function detectVercelBackend() {
+        try {
+          if (window.location.protocol !== 'https:') return;
+          const res = await fetch('/api/translate', { method: 'HEAD' });
+          if (res.ok) {
+            state.hasVercelBackend = true;
+            state.engine = 'gemini';
+            applyEngineUI();
+          }
+        } catch (e) {
+          state.hasVercelBackend = false;
+        }
+      }
 
       function showToast(message, type = 'info') {
         const colors = {
@@ -957,12 +1097,15 @@
           tab.classList.toggle('bg-blue-600/10', active);
           tab.classList.toggle('border-slate-200', !active);
         });
-        dom.geminiConfigBox.classList.toggle('hidden', state.engine !== 'gemini');
+        dom.geminiConfigBox.classList.toggle('hidden', state.engine !== 'gemini' || state.hasVercelBackend);
         updateKeyBadge();
       }
 
       function updateKeyBadge() {
-        if (state.apiKey && state.apiKey.trim().length > 15) {
+        if (state.hasVercelBackend) {
+          dom.keyStatusBadge.textContent = 'متصل بالخادم الآمن';
+          dom.keyStatusBadge.className = 'text-[11px] font-bold text-emerald-600';
+        } else if (state.apiKey && state.apiKey.trim().length > 15) {
           dom.keyStatusBadge.textContent = 'محفوظ وجاهز';
           dom.keyStatusBadge.className = 'text-[11px] font-bold text-emerald-600';
         } else {
@@ -998,7 +1141,7 @@
       function cleanExtractedText(str) {
         return str
           .replace(/\u0000/g, '')
-          .replace(/-\s+([a-z])/g, '$1') // fix hyphenated word wraps
+          .replace(/-\s+([a-z])/g, '$1')
           .replace(/\s+/g, ' ')
           .trim();
       }
@@ -1042,7 +1185,6 @@
         }
       }
 
-      // Extract clean logical lines/paragraphs from a PDF page
       async function extractPageData(pdfDoc, pageNum, captureImage) {
         const page = await pdfDoc.getPage(pageNum);
         const textContent = await page.getTextContent();
@@ -1105,7 +1247,7 @@
             blocks.push({
               en: curr.text,
               ar: '',
-              status: 'pending', // 'pending' | 'done' | 'error'
+              status: 'pending',
               isHeading,
               isProtected: isProtectedLine(curr.text)
             });
@@ -1130,20 +1272,41 @@
         return { pageNum, imageDataUrl, blocks };
       }
 
-      // Fetch with timeout so nothing ever hangs indefinitely
       async function fetchWithTimeout(url, options = {}, timeoutMs = 22000) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
-          const res = await fetch(url, { ...options, signal: controller.signal });
-          return res;
+          return await fetch(url, { ...options, signal: controller.signal });
         } finally {
           clearTimeout(timer);
         }
       }
 
-      // Translation: Gemini API (Indexed JSON object for 100% line alignment & high speed)
+      // Translation via Secure Vercel Serverless Endpoint (/api/translate)
+      async function translateBatchVercel(lines, style) {
+        const res = await fetchWithTimeout(
+          '/api/translate',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lines, style })
+          },
+          30000
+        );
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        return Array.isArray(data.translations) ? data.translations : [];
+      }
+
+      // Translation: Client-side Gemini API
       async function translateBatchGemini(lines, apiKey, style) {
+        if (state.hasVercelBackend) {
+          return await translateBatchVercel(lines, style);
+        }
+
         const styleInstruction =
           style === 'academic'
             ? 'استخدم لغة عربية علمية وأكاديمية دقيقة جداً، واحتفظ بالمصطلح العلمي الإنجليزي المهم بين قوسين بجانب ترجمته العربية.'
@@ -1182,8 +1345,7 @@ ${JSON.stringify(indexedInput)}`;
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          const msg = errData?.error?.message || `HTTP ${res.status}`;
-          throw new Error(`خطأ من Gemini API: ${msg}`);
+          throw new Error(errData?.error?.message || `HTTP ${res.status}`);
         }
 
         const data = await res.json();
@@ -1197,12 +1359,10 @@ ${JSON.stringify(indexedInput)}`;
         });
       }
 
-      // Single-line reliable free translator (Google gtx -> clients5 -> MyMemory)
       async function translateSingleFree(text) {
         const q = text.trim();
         if (!q) return '';
 
-        // Provider 1: Google Translate gtx
         try {
           const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(q)}`;
           const res = await fetchWithTimeout(url, {}, 12000);
@@ -1215,7 +1375,6 @@ ${JSON.stringify(indexedInput)}`;
           }
         } catch (e) {}
 
-        // Provider 2: MyMemory API
         try {
           const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q.slice(0, 490))}&langpair=en|ar`;
           const mmRes = await fetchWithTimeout(mmUrl, {}, 12000);
@@ -1229,13 +1388,9 @@ ${JSON.stringify(indexedInput)}`;
         return '';
       }
 
-      // Fast Batched Free Translator (joins lines into 1 request -> 10x faster, auto-splits on mismatch)
       async function translateBatchFree(lines) {
-        if (lines.length === 1) {
-          return [await translateSingleFree(lines[0])];
-        }
+        if (lines.length === 1) return [await translateSingleFree(lines[0])];
 
-        // Group lines into ~1200-char payload using unique delimiter
         const DELIM = '\n⟪L⟫\n';
         const joined = lines.join(DELIM);
 
@@ -1256,11 +1411,8 @@ ${JSON.stringify(indexedInput)}`;
           } catch (e) {}
         }
 
-        // Concurrent fallback for each line in this small batch (parallel pool of 4)
         const results = new Array(lines.length).fill('');
-        const concurrency = 4;
         let cursor = 0;
-
         async function worker() {
           while (cursor < lines.length) {
             const idx = cursor++;
@@ -1268,45 +1420,28 @@ ${JSON.stringify(indexedInput)}`;
             results[idx] = await translateSingleFree(lines[idx]);
           }
         }
-
-        await Promise.all(Array.from({ length: Math.min(concurrency, lines.length) }, () => worker()));
+        await Promise.all(Array.from({ length: Math.min(4, lines.length) }, () => worker()));
         return results;
       }
 
-      // Translate an array of item descriptors [{ pgIdx, blkIdx, text }] with batching & concurrency
       async function runTranslationItems(items, onItemDone) {
         const isGemini = state.engine === 'gemini';
         const batches = [];
+        const maxLines = isGemini ? 22 : 10;
+        const maxChars = isGemini ? 2800 : 1300;
 
-        if (isGemini) {
-          // Up to 22 lines or ~2800 chars per Gemini batch
-          let current = [];
-          let charCount = 0;
-          for (const item of items) {
-            if (current.length >= 22 || (charCount + item.text.length > 2800 && current.length > 0)) {
-              batches.push(current);
-              current = [];
-              charCount = 0;
-            }
-            current.push(item);
-            charCount += item.text.length;
+        let current = [];
+        let charCount = 0;
+        for (const item of items) {
+          if (current.length >= maxLines || (charCount + item.text.length > maxChars && current.length > 0)) {
+            batches.push(current);
+            current = [];
+            charCount = 0;
           }
-          if (current.length) batches.push(current);
-        } else {
-          // Up to 10 lines or ~1300 chars per Free batch
-          let current = [];
-          let charCount = 0;
-          for (const item of items) {
-            if (current.length >= 10 || (charCount + item.text.length > 1300 && current.length > 0)) {
-              batches.push(current);
-              current = [];
-              charCount = 0;
-            }
-            current.push(item);
-            charCount += item.text.length;
-          }
-          if (current.length) batches.push(current);
+          current.push(item);
+          charCount += item.text.length;
         }
+        if (current.length) batches.push(current);
 
         let batchIdx = 0;
         const maxParallel = isGemini ? 2 : 3;
@@ -1324,28 +1459,22 @@ ${JSON.stringify(indexedInput)}`;
             let translated = [];
 
             try {
-              if (isGemini) {
-                translated = await translateBatchGemini(texts, state.apiKey, state.style);
-              } else {
-                translated = await translateBatchFree(texts);
-              }
+              translated = isGemini
+                ? await translateBatchGemini(texts, state.apiKey, state.style)
+                : await translateBatchFree(texts);
             } catch (err) {
-              // One clean retry before falling back to free engine or marking error
               try {
                 await new Promise((r) => setTimeout(r, 700));
-                if (isGemini) {
-                  translated = await translateBatchGemini(texts, state.apiKey, state.style);
-                } else {
-                  translated = await translateBatchFree(texts);
-                }
+                translated = isGemini
+                  ? await translateBatchGemini(texts, state.apiKey, state.style)
+                  : await translateBatchFree(texts);
               } catch (err2) {
                 translated = new Array(texts.length).fill('');
               }
             }
 
             currentBatch.forEach((item, idx) => {
-              const arText = (translated[idx] || '').trim();
-              onItemDone(item, arText);
+              onItemDone(item, (translated[idx] || '').trim());
             });
           }
         }
@@ -1363,8 +1492,8 @@ ${JSON.stringify(indexedInput)}`;
           return;
         }
 
-        if (state.engine === 'gemini' && (!state.apiKey || state.apiKey.trim().length < 15)) {
-          showToast('أدخل مفتاح Gemini API أولاً أو اختر «ترجمة سريعة» المجانية.', 'warning');
+        if (state.engine === 'gemini' && !state.hasVercelBackend && (!state.apiKey || state.apiKey.trim().length < 15)) {
+          showToast('أدخل مفتاح Gemini API أولاً أو اختر «ترجمة سريعة» المباشرة.', 'warning');
           dom.geminiApiKeyInput.focus();
           return;
         }
@@ -1423,7 +1552,7 @@ ${JSON.stringify(indexedInput)}`;
           renderCurrentLecture();
 
           if (allTranslatable.length === 0) {
-            showToast('لم يتم العثور على نصوص إنجليزية قابلة للاستخراج (قد يكون الملف صوراً ممسوحة ضوئياً).', 'warning');
+            showToast('لم يتم العثور على نصوص إنجليزية قابلة للاستخراج.', 'warning');
             return;
           }
 
@@ -1446,7 +1575,6 @@ ${JSON.stringify(indexedInput)}`;
             updateProgress(pct, `تمت ترجمة ${completed} من ${allTranslatable.length} سطر...`);
           });
 
-          // Mark any remaining pending blocks cleanly so "جاري الترجمة..." NEVER stays stuck
           lecture.pages.forEach((pg) => {
             pg.blocks.forEach((blk) => {
               if (blk.status === 'pending') {
@@ -1457,7 +1585,7 @@ ${JSON.stringify(indexedInput)}`;
           });
 
           if (!state.cancelRequested) {
-            updateProgress(100, failedCount > 0 ? `اكتملت الترجمة (مع ${failedCount} سطر يحتاج إعادة محاولة)` : 'اكتملت الترجمة بنجاح 100%!');
+            updateProgress(100, failedCount > 0 ? `اكتملت الترجمة (مع ${failedCount} سطر متعثر)` : 'اكتملت الترجمة بنجاح!');
             await saveLectureToHistory(lecture);
             showToast(
               failedCount > 0
@@ -1475,13 +1603,10 @@ ${JSON.stringify(indexedInput)}`;
           dom.startTranslateBtnText.textContent = 'ابدأ ترجمة الملزمة';
           dom.pauseResumeBtn.classList.add('hidden');
           dom.cancelTranslateBtn.classList.add('hidden');
-          if (state.currentLecture) {
-            renderCurrentLecture();
-          }
+          if (state.currentLecture) renderCurrentLecture();
         }
       }
 
-      // Retry any failed lines in the current lecture
       async function retryFailedBlocks() {
         if (!state.currentLecture || state.isTranslating) return;
         const missing = [];
@@ -1533,7 +1658,7 @@ ${JSON.stringify(indexedInput)}`;
           arEl.classList.remove('opacity-50', 'italic', 'text-amber-600');
           if (retryBtn) retryBtn.classList.add('hidden');
         } else if (blk.status === 'error') {
-          arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط على زر الإعادة أو عدّله يدوياً';
+          arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط إعادة أو عدّله يدوياً';
           arEl.classList.add('text-amber-600', 'italic');
           if (retryBtn) retryBtn.classList.remove('hidden');
         } else {
@@ -1579,7 +1704,7 @@ ${JSON.stringify(indexedInput)}`;
 
         lecture.pages.forEach((page, pgIdx) => {
           const pageEl = document.createElement('article');
-          pageEl.className = 'bilingual-page rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-sm';
+          pageEl.className = 'bilingual-page rounded-3xl p-3.5 sm:p-6 md:p-8 shadow-sm';
 
           const wmLayer = document.createElement('div');
           wmLayer.className = 'watermark-layer';
@@ -1589,7 +1714,7 @@ ${JSON.stringify(indexedInput)}`;
           const contentLayer = document.createElement('div');
           contentLayer.className = 'page-content-layer space-y-3.5';
 
-          // Page Header
+          // Clean Page Header (no watermark text in header)
           const header = document.createElement('div');
           header.className = 'page-header-bar flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200/80 dark:border-slate-700/80 text-xs';
           header.innerHTML = `
@@ -1597,17 +1722,15 @@ ${JSON.stringify(indexedInput)}`;
               <span class="px-2.5 py-1 rounded-lg bg-blue-600/10 text-blue-700 dark:text-blue-300 shrink-0">صفحة ${page.pageNum}</span>
               <span class="opacity-75 truncate">${escapeHtml(lecture.fileName)}</span>
             </div>
-            <span class="opacity-65 font-bold shrink-0">${WATERMARK_TEXT}</span>
           `;
           contentLayer.appendChild(header);
 
-          // Optional Original Page Snapshot
           if (state.showOriginalVisuals && page.imageDataUrl) {
             const imgWrap = document.createElement('div');
-            imgWrap.className = 'mb-3 p-2 rounded-xl subtle-box text-center';
+            imgWrap.className = 'mb-3 p-2 rounded-2xl subtle-box text-center';
             imgWrap.innerHTML = `
               <p class="text-[11px] font-bold opacity-70 mb-2">لقطة الصفحة الأصلية ${page.pageNum}</p>
-              <img src="${page.imageDataUrl}" alt="صفحة ${page.pageNum}" class="max-w-full max-h-[380px] mx-auto rounded-lg border border-slate-200 dark:border-slate-700" />
+              <img src="${page.imageDataUrl}" alt="صفحة ${page.pageNum}" class="max-w-full max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-700" />
             `;
             contentLayer.appendChild(imgWrap);
           }
@@ -1625,8 +1748,8 @@ ${JSON.stringify(indexedInput)}`;
               const row = document.createElement('div');
               const isSide = state.viewMode === 'side-by-side';
               row.className = isSide
-                ? 'bilingual-block grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4 p-3 sm:p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35'
-                : 'bilingual-block p-3 sm:p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35 space-y-1.5';
+                ? 'bilingual-block grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4 p-3 sm:p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35'
+                : 'bilingual-block p-3 sm:p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/60 bg-white/50 dark:bg-slate-900/35 space-y-1.5';
 
               const enEl = document.createElement('div');
               enEl.className = `en-line ${blk.isHeading ? 'font-bold text-base sm:text-lg' : ''}`;
@@ -1637,7 +1760,7 @@ ${JSON.stringify(indexedInput)}`;
 
               const arEl = document.createElement('div');
               arEl.id = `ar-${pgIdx}-${blkIdx}`;
-              arEl.className = `ar-line editable-ar flex-1 ${blk.isHeading ? 'font-extrabold' : 'font-medium'}`;
+              arEl.className = `ar-line editable-ar flex-1 ${blk.isHeading ? 'font-bold' : 'font-medium'}`;
               arEl.setAttribute('data-default-color', state.arColor === '#1d4ed8' ? 'true' : 'false');
               arEl.setAttribute('contenteditable', 'true');
               arEl.setAttribute('spellcheck', 'false');
@@ -1649,7 +1772,7 @@ ${JSON.stringify(indexedInput)}`;
                 arEl.textContent = 'جاري الترجمة...';
                 arEl.classList.add('opacity-50', 'italic');
               } else {
-                arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط على زر الإعادة أو عدّله يدوياً';
+                arEl.textContent = 'تعذرت ترجمة هذا السطر — اضغط إعادة أو عدّله يدوياً';
                 arEl.classList.add('text-amber-600', 'italic');
               }
 
@@ -1674,7 +1797,7 @@ ${JSON.stringify(indexedInput)}`;
                 retryBtn.textContent = '...';
                 let resText = '';
                 try {
-                  if (state.engine === 'gemini' && state.apiKey.length > 15) {
+                  if (state.engine === 'gemini' && (state.hasVercelBackend || state.apiKey.length > 15)) {
                     const arr = await translateBatchGemini([blk.en], state.apiKey, state.style);
                     resText = arr[0] || '';
                   } else {
@@ -1732,7 +1855,6 @@ ${JSON.stringify(indexedInput)}`;
           .replace(/"/g, '&quot;');
       }
 
-      // Sample University Lecture
       async function loadSampleLecture() {
         const sample = {
           id: 'sample_lecture_demo',
@@ -1818,7 +1940,7 @@ ${JSON.stringify(indexedInput)}`;
         showToast('تم تحميل ملزمة عيّنة جاهزة للتجربة!', 'success');
       }
 
-      // Export Standalone Clean Printable HTML (guarantees both English & Arabic + repeating diagonal watermark)
+      // Export Standalone Printable HTML (silently embeds diagonal watermark)
       function exportStandaloneHtml() {
         if (!state.currentLecture) return;
         if (state.isTranslating) {
@@ -1844,8 +1966,7 @@ ${JSON.stringify(indexedInput)}`;
             return `
               <section class="page-section">
                 <div class="page-head">
-                  <span>صفحة أصلية ${pg.pageNum} — ${escapeHtml(lecture.fileName)}</span>
-                  <span>${WATERMARK_TEXT}</span>
+                  <span>صفحة ${pg.pageNum} — ${escapeHtml(lecture.fileName)}</span>
                 </div>
                 ${imgHtml}
                 ${blocksHtml}
@@ -1858,20 +1979,20 @@ ${JSON.stringify(indexedInput)}`;
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${escapeHtml(lecture.fileName)} — ${WATERMARK_TEXT}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<title>${escapeHtml(lecture.fileName)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Inter:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Readex+Pro:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
   @page { size: A4 portrait; margin: 14mm 12mm; }
   * { box-sizing: border-box; }
   body { font-family: ${state.arFont}; margin: 0; padding: 20px; background: #fff; color: #0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .wm { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.095; background-image: ${watermarkDataUri}; background-repeat: repeat; background-size: 240px 170px; }
+  .wm { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.09; background-image: ${watermarkDataUri}; background-repeat: repeat; background-size: 240px 170px; }
   .wrap { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; }
   .page-section { margin-bottom: 22px; }
-  .page-head { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: #334155; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 12px; font-weight: 700; break-after: avoid; }
+  .page-head { display: flex; justify-content: space-between; font-size: 12px; color: #334155; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 12px; font-weight: 700; break-after: avoid; }
   .orig-img { text-align: center; margin-bottom: 12px; }
   .orig-img img { max-width: 100%; max-height: 420px; border: 1px solid #e2e8f0; border-radius: 8px; }
   .block { margin-bottom: 10px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; break-inside: avoid; page-break-inside: avoid; background: rgba(255,255,255,0.65); }
-  .en { font-family: 'Inter', sans-serif; font-size: ${state.enSize}px; direction: ltr; text-align: left; color: #0f172a; line-height: 1.58; margin-bottom: 4px; overflow-wrap: anywhere; }
+  .en { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; font-size: ${state.enSize}px; direction: ltr; text-align: left; color: #0f172a; line-height: 1.58; margin-bottom: 4px; overflow-wrap: anywhere; }
   .ar { font-family: ${state.arFont}; font-size: ${state.arSize}px; direction: rtl; text-align: right; color: ${state.arColor}; line-height: 1.72; overflow-wrap: anywhere; }
   .heading { font-weight: 800; font-size: 1.12em; }
   .print-btn { position: fixed; bottom: 16px; left: 16px; z-index: 10; background: #059669; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-family: 'Cairo', sans-serif; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -1894,7 +2015,7 @@ ${JSON.stringify(indexedInput)}`;
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-        showToast('تم حفظ النسخة المترجمة المرتبة بالعلامة المائية!', 'success');
+        showToast('تم حفظ النسخة المترجمة بنجاح!', 'success');
       }
 
       async function refreshHistoryUI() {
@@ -1913,7 +2034,7 @@ ${JSON.stringify(indexedInput)}`;
         dom.historyListContainer.innerHTML = '';
         items.forEach((item) => {
           const card = document.createElement('div');
-          card.className = 'subtle-box rounded-xl p-3.5 flex items-center justify-between gap-3 flex-wrap';
+          card.className = 'subtle-box rounded-2xl p-3.5 flex items-center justify-between gap-3 flex-wrap';
           const dateStr = new Date(item.timestamp).toLocaleDateString('ar-IQ', {
             year: 'numeric',
             month: 'short',
@@ -2112,7 +2233,7 @@ ${JSON.stringify(indexedInput)}`;
 
       dom.exportPdfBtn.addEventListener('click', () => {
         if (state.isTranslating) {
-          showToast('انتظر اكتمال الترجمة أولاً قبل تنزيل الـ PDF.', 'warning');
+          showToast('انتظر اكتمال الترجمة أولاً قبل تنزيل الملف.', 'warning');
           return;
         }
         openModal('printGuideModal');
@@ -2151,6 +2272,7 @@ ${JSON.stringify(indexedInput)}`;
       applyEngineUI();
       applyViewModeUI();
       refreshHistoryUI();
+      detectVercelBackend();
       if (window.lucide && window.lucide.createIcons) {
         window.lucide.createIcons();
       }
